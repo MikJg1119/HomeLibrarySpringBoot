@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Add book</title>
+</head>
+<body>
+    <h1>Type ISBN</h1>
+    <form action="#" th:action="@{/saveBook}" th:object="${isbn}" method="post">
+        <label for="isbn">ISBN</label><br>
+        <input type="text" id="isbn" name="isbn"><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
