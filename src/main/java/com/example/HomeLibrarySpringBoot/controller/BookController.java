@@ -41,7 +41,7 @@ public class BookController {
 
     @PostMapping("/updateBook") // different handling method for update, not to overwrite the data with new ISBN search
     public String updateBook(@ModelAttribute("book") Book book){
-        bookService.addBook(book);
+        bookService.updateBook(book);
         return "redirect:/";
     }
 
