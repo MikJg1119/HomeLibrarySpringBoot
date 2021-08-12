@@ -22,6 +22,7 @@
             <td th:text="${book.author}"></td>
             <td th:text="${book.isbn}"></td>
             <td><a th:href="@{/showFormForUpdate/{id}(id=${book.id})}">Update</a></td>
+            <td><a th:href="@{/deleteBook/{id}(id=${book.id})}">Delete</a></td>
         </tr>
     </tbody>
 

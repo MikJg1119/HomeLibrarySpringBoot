@@ -39,6 +39,12 @@ public class BookController {
         return "redirect:/";
     }
 
+    @PostMapping("/updateBook") // different handling method for update, not to overwrite the data with new ISBN search
+    public String updateBook(@ModelAttribute("book") Book book){
+        bookService.addBook(book);
+        return "redirect:/";
+    }
+
     @GetMapping("/showFormForUpdate/{id}")
     public String showFormForUpdate(@PathVariable(value = "id") int id, Model model){
         Book book = bookService.getBook(id);
@@ -47,6 +53,11 @@ public class BookController {
 
     }
 
+    @GetMapping("/deleteBook/{id}")
+    public String deleteBook(@PathVariable(value = "id") int id){
+        bookService.removeBook(id);
+        return "redirect:/";
+    }
 
 
 
