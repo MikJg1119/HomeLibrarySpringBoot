@@ -12,6 +12,7 @@
         <th>Book Name</th>
         <th>Authors Name</th>
         <th>ISBN</th>
+        <th>Actions</th>
     </tr>
     </thead>
 
@@ -20,6 +21,7 @@
             <td th:text="${book.name}"></td>
             <td th:text="${book.author}"></td>
             <td th:text="${book.isbn}"></td>
+            <td><a th:href="@{/showFormForUpdate/{id}(id=${book.id})}">Update</a></td>
         </tr>
     </tbody>
 

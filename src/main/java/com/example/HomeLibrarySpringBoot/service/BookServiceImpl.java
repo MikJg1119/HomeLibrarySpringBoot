@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BookServiceImpl implements BookService{
@@ -25,7 +26,14 @@ public class BookServiceImpl implements BookService{
 
     @Override
     public Book getBook(int id) {
-        return bookRepository.getById(id);
+        Optional<Book> optional = bookRepository.findById(id);
+        Book book = null;
+        if (optional.isPresent()){
+            book = optional.get();
+        }else {
+            throw new RuntimeException(" Book not found ");
+        }
+        return book;
     }
 
     @Override
