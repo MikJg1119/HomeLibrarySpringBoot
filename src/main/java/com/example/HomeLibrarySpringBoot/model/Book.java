@@ -1,6 +1,7 @@
 package com.example.HomeLibrarySpringBoot.model;
 
 
+import com.example.HomeLibrarySpringBoot.repository.AuthorRepository;
 import lombok.Getter;
 import lombok.Setter;
 import org.jsoup.Jsoup;
@@ -35,10 +36,11 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @Transient
-    private Author authorEntity = new Author(this.getAuthor());
+    private Author authorEntity = new Author(this.getAuthor());  //entity needed to get authorid out of authors table
     @Column(name ="authorid")
     private int authorId=authorEntity.getId();
-
+    @Transient
+    private AuthorRepository authorRepository;
 //    @Autowired
 //    public Book() {
 //    }
@@ -66,7 +68,8 @@ public class Book {
             // getting author
             results = webSite.select("p.author");
             for (Element result : results) {
-                this.authorEntity = new Author(result.getElementsByTag("strong").first().text());
+                this.authorEntity=authorRepository.findByName(result.getElementsByTag("strong").first().text());
+//                this.authorEntity = new Author(result.getElementsByTag("strong").first().text());
                 this.author = authorEntity.getName();
             }
             // getting publisher
