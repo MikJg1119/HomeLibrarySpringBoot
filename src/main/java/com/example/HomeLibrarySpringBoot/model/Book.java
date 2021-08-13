@@ -34,8 +34,8 @@ public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-
-    private Author authorEntity;
+    @Transient
+    private Author authorEntity = new Author(this.getAuthor());
     @Column(name ="authorid")
     private int authorId=authorEntity.getId();
 
@@ -48,7 +48,7 @@ public class Book {
         if (this.language==null){
             this.language="Polski";
         }
-        Author author = new Author(getAuthor());
+
     }
 
 

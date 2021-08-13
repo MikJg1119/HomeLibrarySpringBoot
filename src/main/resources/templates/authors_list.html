@@ -5,11 +5,12 @@
     <title>Title</title>
 </head>
 <body>
+<a th:href ="@{/}">Books List</a>
 <table >
     <thead>
     <tr>
         <th>Author Name</th>
-
+        <th>Actions</th>
     </tr>
     </thead>
 
@@ -17,6 +18,7 @@
         <tr th:each="author:${authors}">
             <td th:text="${author.name}"></td>
             <td><a th:href="@{/showFormForAuthorUpdate/{id}(id=${author.id})}">Update</a></td>
+            <td><a th:href="@{/deleteBook/{id}(id=${book.id})}">Delete</a></td>
         </tr>
     </tbody>
 
