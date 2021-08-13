@@ -16,7 +16,7 @@
     <tbody>
         <tr th:each="author:${authors}">
             <td th:text="${author.name}"></td>
-
+            <td><a th:href="@{/showFormForAuthorUpdate/{id}(id=${author.id})}">Update</a></td>
         </tr>
     </tbody>
 

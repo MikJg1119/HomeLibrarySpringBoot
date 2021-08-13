@@ -34,8 +34,10 @@ public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    private Author authorEntity;
     @Column(name ="authorid")
-    private int authorId;
+    private int authorId=authorEntity.getId();
 
 //    @Autowired
 //    public Book() {
@@ -46,6 +48,7 @@ public class Book {
         if (this.language==null){
             this.language="Polski";
         }
+        Author author = new Author(getAuthor());
     }
 
 
@@ -63,8 +66,8 @@ public class Book {
             // getting author
             results = webSite.select("p.author");
             for (Element result : results) {
-                Author author = new Author(result.getElementsByTag("strong").first().text());
-                this.author = author.getName();
+                this.authorEntity = new Author(result.getElementsByTag("strong").first().text());
+                this.author = authorEntity.getName();
             }
             // getting publisher
             results = webSite.select("span.opt-publisher");
