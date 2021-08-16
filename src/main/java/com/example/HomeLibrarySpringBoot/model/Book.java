@@ -42,6 +42,15 @@ public class Book {
     private int authorId; //=authorEntity.getId();
     @Transient
     private AuthorRepository authorRepository;
+    @Column(name = "saga")
+    private String saga;
+    @Column(name = "publishingseries")
+    private String publishingSeries;
+    @Column(name ="loaneeid")
+    private int loaneeId;
+    @ManyToOne
+    @JoinColumn(name = "loaneeid", insertable = false, updatable = false)
+    private Loanee loanee;
 //    @Autowired
 //    public Book() {
 //    }
