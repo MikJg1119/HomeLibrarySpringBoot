@@ -35,10 +35,11 @@ public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @Transient
-    private Author authorEntity = new Author(this.getAuthor());  //entity needed to get authorid out of authors table
+    @ManyToOne
+    @JoinColumn(name = "authorid", insertable = false, updatable = false)
+    private Author authorEntity;  //entity needed to get authorid out of authors table
     @Column(name ="authorid")
-    private int authorId=authorEntity.getId();
+    private int authorId; //=authorEntity.getId();
     @Transient
     private AuthorRepository authorRepository;
 //    @Autowired
