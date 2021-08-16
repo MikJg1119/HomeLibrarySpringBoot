@@ -9,7 +9,7 @@
 <body>
 
     <div class="container">
-        <button type="button" class="btn btn-link" th:href ="@{/}">Books List</button>
+        <a  class="btn btn-link" th:href ="@{/}">Books List</a>
         <div class="row">
             <div class="col-md-6">
                 <table >
@@ -23,8 +23,8 @@
                     <tbody>
                         <tr th:each="author:${authors}">
                             <td th:text="${author.name}"></td>
-                            <td><button type="button" class="btn btn-info" th:href="@{/showFormForAuthorUpdate/{id}(id=${author.id})}">Update</button></td>
-                            <td><button type="button" class="btn btn-danger" th:href="@{/deleteBook/{id}(id=${book.id})}">Delete</button></td>
+                            <td><a type="button" class="btn btn-info" th:href="@{/showFormForAuthorUpdate/{id}(id=${author.id})}">Update</a></td>
+                            <td><a type="button" class="btn btn-danger" th:href="@{/deleteBook/{id}(id=${book.id})}">Delete</a></td>
                         </tr>
                     </tbody>
 

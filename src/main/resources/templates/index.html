@@ -9,8 +9,8 @@
 <body>
 
 <div class="container">
-    <button type="button" class="btn btn-primary" th:href ="@{/addBook}">Add Book</button>
-    <button type="button" class="btn btn-primary" th:href ="@{/authors}">Authors List</button>
+    <a  class="btn btn-primary" th:href ="@{/addBook}">Add Book</a>
+    <a  class="btn btn-primary" th:href ="@{/authors}">Authors List</a>
     <div class="row">
         <div class="col-md-6">
             <table class="table table-striped table-bordered table-hover table-responsive">
@@ -33,8 +33,8 @@
                         <td class="table-success" th:text="${book.isbn}"></td>
                         <td class="table-warning" th:text="${book.publisher}"></td>
                         <td class="table-success" th:text="${book.publishedYear}"></td>
-                        <td class="table-primary"><button type="button" class="btn btn-info" th:href="@{/showFormForUpdate/{id}(id=${book.id})}">Update</button>
-                        <button type="button" class="btn btn-danger" th:href="@{/deleteBook/{id}(id=${book.id})}">Delete</button></td>
+                        <td class="table-primary"><a  class="btn btn-info" th:href="@{/showFormForUpdate/{id}(id=${book.id})}">Update</a>
+                        <a  class="btn btn-danger" th:href="@{/deleteBook/{id}(id=${book.id})}">Delete</a></td>
                     </tr>
                 </tbody>
 
