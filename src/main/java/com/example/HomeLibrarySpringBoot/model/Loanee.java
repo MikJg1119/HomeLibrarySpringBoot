@@ -1,6 +1,8 @@
 package com.example.HomeLibrarySpringBoot.model;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.List;
@@ -13,10 +15,15 @@ public class Loanee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-
+    @Getter
+    @Setter
     private String name;
     @OneToMany(mappedBy = "loaneeId")
     private Set<Book> loanedBooks;
+
+    public Loanee(String name) {
+        this.name = name;
+    }
 
     public void addLoanedBook(Book book){
         loanedBooks.add(book);

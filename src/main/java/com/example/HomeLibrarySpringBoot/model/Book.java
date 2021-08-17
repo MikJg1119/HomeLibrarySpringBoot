@@ -51,6 +51,7 @@ public class Book {
     @ManyToOne
     @JoinColumn(name = "loaneeid", insertable = false, updatable = false)
     private Loanee loanee;
+    private Boolean isLoaned;
 //    @Autowired
 //    public Book() {
 //    }
@@ -60,6 +61,7 @@ public class Book {
         if (this.language==null){
             this.language="Polski";
         }
+
 
     }
 
