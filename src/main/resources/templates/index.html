@@ -32,14 +32,14 @@
 
                 <tbody>
                     <tr th:each="book:${books}">
-                        <td class="table-success" ><a class="btn btn-primary" th:if="${book.isLoaned}==true" th:text="${book.loanee.getName}" th:href="@{/loanedBooksListByLoanee/{id}(id=${book.loanee.getLoaneeId})}"></a>
+                        <td class="table-success" ><a class="btn btn-primary" th:if="${book.isLoaned}==true" th:text="${book.loanee.getName}" th:href="@{/loanedBooksListByLoanee/{id}(id=${book.loanee.getLoaneeId})}" method="post"></a>
                                                     <input class="form-check-input" type="checkbox"  th:if="${book.isLoaned}==false" name="loan" th:value="${book.id}" th:field="*{booksToBeLoaned}"></td>
                         <td class="table-warning" th:text="${book.name}"></td>
                         <td class="table-warning" th:text="${book.author}"></td>
                         <td class="table-warning" th:text="${book.isbn}"></td>
                         <td class="table-warning" th:text="${book.publisher}"></td>
                         <td class="table-warning" th:text="${book.publishedYear}"></td>
-                        <td class="table-primary"><a  class="btn btn-info" th:href="@{/showFormForUpdate/{id}(id=${book.id})}" method="post">Update</a>
+                        <td class="table-primary"><a  class="btn btn-info" th:href="@{/showFormForUpdate/{id}(id=${book.id})}">Update</a>
                         <a  class="btn btn-danger" th:href="@{/deleteBook/{id}(id=${book.id})}">Delete</a></td>
                     </tr>
                 </tbody>

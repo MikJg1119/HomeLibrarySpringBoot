@@ -55,4 +55,27 @@ public class LoaneeController {
         return "redirect:/";
     }
 
+    @PostMapping("/loanedBooksListByLoanee/{id}")
+    public String listOfBooksLoanedByLoanee(@PathVariable(value = "id") int id, Model model){
+        model.addAttribute("loanee", loaneeService.getLoanee(id).getName());
+        model.addAttribute("loanedBooks", loaneeService.getLoanee(id).getLoanedBooks());
+        return "/books";
+    }
+
+    @PostMapping("/returnBook/{id}")
+    public String returnBookToLibrary(@PathVariable(value = "id") int bookId, Model model){
+        Book book = bookService.getBook(bookId);
+        Loanee loanee = book.getLoanee();
+        loanee.returnLoanedBook(book);
+        model.addAttribute("loanee", loanee.getName());
+        model.addAttribute("loanedBooks", loanee.getLoanedBooks());
+        return "/books";
+    }
+
+    @GetMapping ("/loanees")
+    public String getLoaneesList(Model model){
+        model.addAttribute("loanees",loaneeService.getLoanees());
+        return "/loanees_list";
+    }
+
 }

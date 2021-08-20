@@ -7,23 +7,44 @@
 
 </head>
 <body>
-<table >
-    <thead>
-    <tr>
-        <th>Book Name</th>
-        <th>Authors Name</th>
-        <th>ISBN</th>
-    </tr>
-    </thead>
+<div class="container">
+    <a  class="btn btn-primary" th:href ="@{/addBook}">Add Book</a>
+    <a  class="btn btn-primary" th:href ="@{/authors}">Authors List</a>
+    <a class="btn btn-primary" th:href="@{/loanees}">See All Loaned Books</a>
+    <a  class="btn btn-primary" th:href ="@{/loanBooksForm}">Loan Books</a>
+    <h1 th:text="Loanee name + ${loanee}"></h1>
 
-    <tbody>
-        <tr th:each="book:${books}">
-            <td th:text="${book.name}"></td>
-            <td th:text="${book.author}"></td>
-            <td th:text="${book.isbn}"></td>
-        </tr>
-    </tbody>
+    <div class="row">
+        <div class="col-md-6">
+            <table class="table table-striped table-bordered table-hover table-responsive-md" style="border-width:4px">
+                <thead class="thead-dark">
+                <tr>
+                    <th>Book Name</th>
+                    <th>Authors Name</th>
+                    <th>ISBN</th>
+                    <th>Publisher</th>
+                    <th>Published Year</th>
+                    <th colspan="2">Actions</th>
 
-</table>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr th:each="book:${loanedBooks}">
+
+                    <td class="table-warning" th:text="${book.name}"></td>
+                    <td class="table-warning" th:text="${book.author}"></td>
+                    <td class="table-warning" th:text="${book.isbn}"></td>
+                    <td class="table-warning" th:text="${book.publisher}"></td>
+                    <td class="table-warning" th:text="${book.publishedYear}"></td>
+                    <td class="table-primary"><a  class="btn btn-info" th:href="@{/returnBook/{id}(id=${book.id})}" method="post">Return Book</a>
+                        <a  class="btn btn-danger" th:href="@{/deleteBook/{id}(id=${book.id})}">Delete</a></td>
+                </tr>
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+</div>
 </body>
 </html>
