@@ -31,6 +31,11 @@ dependencies {
 //	implementation group: 'javax.servlet', name: 'jstl', version: '1.2'
 //	implementation group: 'org.apache.tomcat.embed', name: 'tomcat-embed-jasper'
 	runtimeOnly 'org.postgresql:postgresql'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.security:spring-security-test'
+	implementation group: 'org.thymeleaf.extras', name: 'thymeleaf-extras-springsecurity5', version: '3.0.4.RELEASE'
+
 
 
 }

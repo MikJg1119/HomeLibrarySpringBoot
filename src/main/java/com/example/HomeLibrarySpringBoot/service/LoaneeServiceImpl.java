@@ -3,6 +3,7 @@ package com.example.HomeLibrarySpringBoot.service;
 import com.example.HomeLibrarySpringBoot.model.Book;
 import com.example.HomeLibrarySpringBoot.model.Loanee;
 import com.example.HomeLibrarySpringBoot.repository.LoaneeRepository;
+import com.example.HomeLibrarySpringBoot.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +14,11 @@ public class LoaneeServiceImpl implements LoaneeService{
 
     @Autowired
     private LoaneeRepository loaneeRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+
 
     @Override
     public void addLoanee(Loanee loanee) {
@@ -53,4 +59,10 @@ public class LoaneeServiceImpl implements LoaneeService{
     public void returnLoanedBook(List<Book> booksToBeReturned, int loaneeId) {
         loaneeRepository.getById(loaneeId).returnLoanedBook(booksToBeReturned);
     }
+
+    @Override
+    public List<Loanee> getAllLoaneesById(Iterable<Integer> ids) {
+        return loaneeRepository.findAllById(ids);
+    }
+
 }

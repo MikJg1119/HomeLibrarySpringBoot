@@ -14,4 +14,5 @@ public interface LoaneeService {
     void loanBook(List<Book> booksToBeLoaned, int loaneeId);
     void returnLoanedBook(Book book,int loaneeId);
     void returnLoanedBook(List<Book> booksToBeReturned, int loaneeId);
+    List<Loanee> getAllLoaneesById(Iterable<Integer> ids);
 }

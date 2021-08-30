@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Add book</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+</head>
+<body>
+<div class="container">
+    <h1>Type name</h1>
+    <div class="row">
+
+    <form action="#" th:action="@{/saveLoaneeAndLoanBooks}" th:object="${loanee}" method="post">
+        <label for="newLoanee">New Loanee</label><br>
+        <input type="text" id="newLoanee" name="newLoanee"><br>
+        <input type="submit" value="Submit">
+    </form>
+    </div>
+    <h2>Choose Name from the List</h2>
+    <table>
+        <thead>
+        <th>Name</th>
+        </thead>
+        <tbody>
+        <tr th:each="loanee:${loanees}">
+            <td><td class="table-warning"><a  th:text="${loanee.name}" th:href="@{/loanBooksToLoanee/{id}(id=${loanee.id})}" method="post"></a></td></td>
+        </tr>
+
+        </tbody>
+    </table>
+    <table>
+        <thead>
+        <th>Books To Be Loaned</th>
+        </thead>
+        <tbody>
+        <tr th:each="book:${booksToBeLoaned}">
+            <td><td class="table-success"><a  th:text="${book.name}" th:href="@{/loanBooksToLoanee/{id}(id=${loanee.id})}" method="post"></a></td></td>
+        </tr>
+
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

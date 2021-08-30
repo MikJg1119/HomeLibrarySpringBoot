@@ -11,4 +11,7 @@ public interface BookService {
     Book getBook(int id);
     void updateBook(Book book);
     List<Book> getBooks();
+    List<Book> getBooksById(Iterable<Integer> ids);
+    Book getBookByName(String title);
+    List<Book> getBookByAuthor(String author);
 }

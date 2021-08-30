@@ -6,7 +6,6 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Data
@@ -18,8 +17,15 @@ public class Loanee {
     @Getter
     @Setter
     private String name;
-    @OneToMany(mappedBy = "loaneeId")
-    private Set<Book> loanedBooks;
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "loanees_books",
+            joinColumns = @JoinColumn(
+                    name = "loanee_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(
+                    name = "book_id", referencedColumnName = "id"))
+    private List<Book> loanedBooks;
 
     public Loanee(String name) {
         this.name = name;

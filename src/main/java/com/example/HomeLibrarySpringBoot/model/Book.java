@@ -46,15 +46,13 @@ public class Book {
     private String saga;
     @Column(name = "publishingseries")
     private String publishingSeries;
-    @Column(name ="loaneeid")
-    private int loaneeId;
-    @ManyToOne
-    @JoinColumn(name = "loaneeid", insertable = false, updatable = false)
-    private Loanee loanee;
-    private Boolean isLoaned;
-//    @Autowired
-//    public Book() {
-//    }
+//    @Column(name ="loaneeid")
+//    private int loaneeId;
+//    @ManyToOne
+//    @JoinColumn(name = "loaneeid", insertable = false, updatable = false)
+//    private Loanee loanee;
+//    private Boolean isLoaned;
+
 
 
         public Book(){
@@ -66,7 +64,7 @@ public class Book {
     }
 
 
-    public Book(String isbn) {
+    public Book scrapeBookByIsbn(String isbn) {
         this.isbn =isbn;
         urlBuild.append(isbn);
         try{
@@ -81,7 +79,9 @@ public class Book {
             results = webSite.select("p.author");
             for (Element result : results) {
                 this.authorEntity=authorRepository.findByName(result.getElementsByTag("strong").first().text());
-//                this.authorEntity = new Author(result.getElementsByTag("strong").first().text());
+                if (this.authorEntity==null) {
+                this.authorEntity = new Author(result.getElementsByTag("strong").first().text());
+                }
                 this.author = authorEntity.getName();
             }
             // getting publisher
@@ -101,7 +101,10 @@ public class Book {
         }catch (IOException e){
             e.printStackTrace();
         }
+        return this;
     }
+
+
 
 
 }

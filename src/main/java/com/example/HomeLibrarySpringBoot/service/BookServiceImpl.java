@@ -46,4 +46,19 @@ public class BookServiceImpl implements BookService{
         return bookRepository.findAll();
 
     }
+
+    @Override
+    public List<Book> getBooksById(Iterable<Integer> ids) {
+        return bookRepository.findAllById(ids);
+    }
+
+    @Override
+    public Book getBookByName(String title) {
+        return bookRepository.findByTitle(title);
+    }
+
+    @Override
+    public List<Book> getBookByAuthor(String author) {
+        return getBookByAuthor(author);
+    }
 }

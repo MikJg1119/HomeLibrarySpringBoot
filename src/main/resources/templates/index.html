@@ -32,8 +32,8 @@
 
                 <tbody>
                     <tr th:each="book:${books}">
-                        <td class="table-success" ><a class="btn btn-primary" th:if="${book.isLoaned}==true" th:text="${book.loanee.getName}" th:href="@{/loanedBooksListByLoanee/{id}(id=${book.loanee.getLoaneeId})}" method="post"></a>
-                                                    <input class="form-check-input" type="checkbox"  th:if="${book.isLoaned}==false" name="loan" th:value="${book.id}" th:field="*{booksToBeLoaned}"></td>
+                        <td class="table-success" ><a class="btn btn-primary" th:if="${sec:authentication.getPrincipal().checkIfBookIsLoaned(book)!=null}" th:text="${#authentication.getPrincipal().checkIfBookIsLoaned(book).getName}" th:href="@{/loanedBooksListByLoanee/{id}(id=$#authentication.getPrincipal().checkIfBookIsLoaned(book).getLoaneeId})}" method="post"></a>
+                                                    <input class="form-check-input" type="checkbox"  th:if="${sec:authentication.checkIfBookIsLoaned(book)==null}" name="loan" th:value="${book.id}" th:field="*{booksToBeLoaned}"></td>
                         <td class="table-warning" th:text="${book.name}"></td>
                         <td class="table-warning" th:text="${book.author}"></td>
                         <td class="table-warning" th:text="${book.isbn}"></td>
