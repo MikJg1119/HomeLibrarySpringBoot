@@ -42,9 +42,9 @@ public class BookController {
 
     @PostMapping("/saveBook")
     public String saveBook(@ModelAttribute("isbn") String isbn){
-        Book book = new Book();
-        book.scrapeBookByIsbn(isbn);// webscraping data based on isbn
-        bookService.addBook(book);
+        Book book = bookService.getBookByIsbn(isbn);
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        user.getBooks().add(book);
         return "redirect:/";
     }
 

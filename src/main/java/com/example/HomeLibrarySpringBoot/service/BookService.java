@@ -14,4 +14,5 @@ public interface BookService {
     List<Book> getBooksById(Iterable<Integer> ids);
     Book getBookByName(String title);
     List<Book> getBookByAuthor(String author);
+    Book getBookByIsbn(String isbn);
 }

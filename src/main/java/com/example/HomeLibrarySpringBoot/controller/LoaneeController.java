@@ -53,6 +53,8 @@ public class LoaneeController {
             booksToBeLoaned.add(bookService.getBook(i));
         }
         loaneeService.addLoanee(loanee);
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        user.getLoanees().add(loanee);
         loaneeService.loanBook(booksToBeLoaned,loanee.getId());
 
         return "redirect:/";
