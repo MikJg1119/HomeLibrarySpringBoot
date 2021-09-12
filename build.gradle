@@ -6,7 +6,7 @@ plugins {
 jar {
     manifest {
         attributes(
-                'Main-Class': 'java.com.example.HomeLibrarySpringBoot'
+                'Main-Class': 'src.main.java.com.example.HomeLibrarySpringBoot'
         )
     }
 }
