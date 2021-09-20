@@ -4,7 +4,9 @@ import com.example.HomeLibrarySpringBoot.model.Book;
 import com.example.HomeLibrarySpringBoot.model.Loanee;
 import com.example.HomeLibrarySpringBoot.model.User;
 import com.example.HomeLibrarySpringBoot.service.BookService;
+import com.example.HomeLibrarySpringBoot.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,11 +23,16 @@ public class BookController {
     @Autowired
     private BookService bookService;
 
+    @Autowired
+    private UserService userService;
+
     @GetMapping("/")
     public String booksList(Model model){
-
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User user = userService.getUserByName(username);
         List<Book> books = user.getBooks();
+
         model.addAttribute("books", books);
 
         List<Loanee> loanees = user.getLoanees();
@@ -43,7 +50,9 @@ public class BookController {
     @PostMapping("/saveBook")
     public String saveBook(@ModelAttribute("isbn") String isbn){
         Book book = bookService.getBookByIsbn(isbn);
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User user = userService.getUserByName(username);
         user.getBooks().add(book);
         return "redirect:/";
     }
