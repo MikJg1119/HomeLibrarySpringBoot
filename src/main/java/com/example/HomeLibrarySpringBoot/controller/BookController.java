@@ -36,6 +36,7 @@ public class BookController {
             books=user.getBooks();
         }catch (NullPointerException e){
             books=new ArrayList<Book>();
+            user.getBooks().addAll(books);
 //            return "redirect:/addBook";
         }
         model.addAttribute("books", books);
