@@ -1,7 +1,6 @@
 package com.example.HomeLibrarySpringBoot.controller;
 
 import com.example.HomeLibrarySpringBoot.model.Book;
-import com.example.HomeLibrarySpringBoot.model.Loanee;
 import com.example.HomeLibrarySpringBoot.model.User;
 import com.example.HomeLibrarySpringBoot.service.BookService;
 import com.example.HomeLibrarySpringBoot.service.UserService;
@@ -37,14 +36,10 @@ public class BookController {
             books=user.getBooks();
         }catch (NullPointerException e){
             books=new ArrayList<Book>();
-            return "redirect:/addBook";
+//            return "redirect:/addBook";
         }
-
         model.addAttribute("books", books);
-
-        List<Loanee> loanees = user.getLoanees();
-
-        return "index";
+                return "index";
     }
 
     @GetMapping("/addBook")
