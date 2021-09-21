@@ -5,7 +5,9 @@ import com.example.HomeLibrarySpringBoot.model.Loanee;
 import com.example.HomeLibrarySpringBoot.model.User;
 import com.example.HomeLibrarySpringBoot.service.BookService;
 import com.example.HomeLibrarySpringBoot.service.LoaneeService;
+import com.example.HomeLibrarySpringBoot.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,6 +25,9 @@ public class LoaneeController {
     @Autowired
     BookService bookService;
 
+    @Autowired
+    UserService userService;
+
     private List<Book> booksToBeLoaned;
 
     @GetMapping("/loanBooksForm")
@@ -33,7 +38,9 @@ public class LoaneeController {
 
 
         }
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User user = userService.getUserByName(username);
         model.addAttribute("booksToBeLoaned",booksToBeLoaned);
         model.addAttribute("loanees",user.getLoanees());
         return "/loanBooks";
@@ -44,6 +51,14 @@ public class LoaneeController {
             booksToBeLoaned.add(bookService.getBook(i));
         }
         loaneeService.loanBook(booksToBeLoaned,id);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User user = userService.getUserByName(username);
+        List<Loanee> usersLoanees = user.getLoanees();
+        Loanee loanee = loaneeService.getLoanee(id);
+        if(!usersLoanees.contains(loanee)){
+            usersLoanees.add(loanee);
+        }
         return "redirect:/";
     }
 
@@ -53,7 +68,9 @@ public class LoaneeController {
             booksToBeLoaned.add(bookService.getBook(i));
         }
         loaneeService.addLoanee(loanee);
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User user = userService.getUserByName(username);
         user.getLoanees().add(loanee);
         loaneeService.loanBook(booksToBeLoaned,loanee.getId());
 
@@ -70,7 +87,9 @@ public class LoaneeController {
     @PostMapping("/returnBook/{id}")
     public String returnBookToLibrary(@PathVariable(value = "id") int bookId, Model model){
         Book book = bookService.getBook(bookId);
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User user = userService.getUserByName(username);
 
         Loanee loanee = user.checkIfBookIsLoaned(book);
         loanee.returnLoanedBook(book);
@@ -81,7 +100,9 @@ public class LoaneeController {
 
     @GetMapping ("/loanees")
     public String getLoaneesList(Model model){
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User user = userService.getUserByName(username);
         model.addAttribute("loanees",user.getLoanees());
         return "/loanees_list";
     }

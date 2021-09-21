@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -31,7 +32,13 @@ public class BookController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         User user = userService.getUserByName(username);
-        List<Book> books = user.getBooks();
+        List<Book> books;
+        try {
+            books=user.getBooks();
+        }catch (NullPointerException e){
+            books=new ArrayList<Book>();
+            return "redirect:/addBook";
+        }
 
         model.addAttribute("books", books);
 
@@ -73,7 +80,11 @@ public class BookController {
 
     @GetMapping("/deleteBook/{id}")
     public String deleteBook(@PathVariable(value = "id") int id){
-        bookService.removeBook(id);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User user = userService.getUserByName(username);
+        user.getBooks().remove(bookService.getBook(id));
+
         return "redirect:/";
     }
 

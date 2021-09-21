@@ -14,6 +14,9 @@ public class BookServiceImpl implements BookService{
     @Autowired
     private BookRepository bookRepository;
 
+    @Autowired
+    private UserService userService;
+
     @Override
     public void addBook(Book book) {
         bookRepository.save(book);

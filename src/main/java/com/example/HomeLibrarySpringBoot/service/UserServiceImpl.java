@@ -1,6 +1,8 @@
 package com.example.HomeLibrarySpringBoot.service;
 
 import com.example.HomeLibrarySpringBoot.controller.dto.UserRegistrationDto;
+import com.example.HomeLibrarySpringBoot.model.Book;
+import com.example.HomeLibrarySpringBoot.model.Loanee;
 import com.example.HomeLibrarySpringBoot.model.Role;
 import com.example.HomeLibrarySpringBoot.model.User;
 import com.example.HomeLibrarySpringBoot.repository.UserRepository;
@@ -12,6 +14,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -29,7 +32,7 @@ public class UserServiceImpl implements UserService{
     public User save(UserRegistrationDto registrationDto) {
         User user = new User(registrationDto.getName(),
                 registrationDto.getEmail(),
-                passwordEncoder.encode(registrationDto.getPassword()), Arrays.asList(new Role("ROLE_USER")));
+                passwordEncoder.encode(registrationDto.getPassword()), Arrays.asList(new Role("ROLE_USER")),new ArrayList<Book>(), new ArrayList<Loanee>());
 
         return userRepository.save(user);
     }
@@ -56,4 +59,6 @@ public class UserServiceImpl implements UserService{
     public User getUserByName(String name){
         return userRepository.findByName(name);
     }
+
+
 }

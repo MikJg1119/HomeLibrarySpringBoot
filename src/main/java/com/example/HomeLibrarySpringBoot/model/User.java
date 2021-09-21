@@ -51,11 +51,13 @@ public class User {
     )
     private List<Loanee> loanees;
 
-    public User(String name, String email, String password, Collection<Role> roles) {
+    public User(String name, String email, String password, Collection<Role> roles, List<Book> books, List<Loanee> loanees) {
         this.name = name;
         this.email = email;
         this.password = password;
         this.roles = roles;
+        this.books = books;
+        this.loanees = loanees;
     }
 
     public Loanee checkIfBookIsLoaned(Book book){
