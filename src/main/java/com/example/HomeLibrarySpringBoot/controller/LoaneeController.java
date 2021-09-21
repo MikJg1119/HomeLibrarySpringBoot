@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -54,7 +55,13 @@ public class LoaneeController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         User user = userService.getUserByName(username);
-        List<Loanee> usersLoanees = user.getLoanees();
+        List<Loanee> usersLoanees;
+        try {
+            usersLoanees = user.getLoanees();
+        }catch (NullPointerException e){
+            usersLoanees = new ArrayList<Loanee>();
+            user.getLoanees().addAll(usersLoanees);
+        }
         Loanee loanee = loaneeService.getLoanee(id);
         if(!usersLoanees.contains(loanee)){
             usersLoanees.add(loanee);

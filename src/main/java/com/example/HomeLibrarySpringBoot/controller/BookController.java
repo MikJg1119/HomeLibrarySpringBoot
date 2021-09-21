@@ -79,7 +79,7 @@ public class BookController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         User user = userService.getUserByName(username);
-        user.getBooks().remove(bookService.getBook(id));
+        user.getBooks().remove(id);
 
         return "redirect:/";
     }
