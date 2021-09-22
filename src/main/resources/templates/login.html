@@ -3,8 +3,6 @@
 <head>
     <meta charset="ISO-8859-1">
     <title th:text="#{loginTitle.text}"></title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="internationalization.js"></script>
 
     <link rel="stylesheet"
           href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
@@ -57,16 +55,17 @@
                 </div>
             </form>
             <div class="form-group">
-						<span th:text="#{newUser.text}"><a href="/" th:href="@{/registration}" th:text="#{registerHere.text}"></a></span>
+						<span th:text="#{newUser.text}"><a href="/" th:href="@{/registration}" th:text="#{registerHere.text}">Register
+								here</a></span>
             </div>
         </div>
     </div>
+    <span th:text="#{lang.change}"></span>
+    <select id="locales">
+        <option value=""></option>
+        <option value="en" th:text="#{lang.eng}"></option>
+        <option value="pl" th:text="#{lang.pl}"></option>
+    </select>
 </div>
-<span th:text="#{lang.change}"></span>
-<select id="locales">
-    <option value=""></option>
-    <option value="en" th:text="#{lang.eng}"></option>
-    <option value="pl" th:text="#{lang.pl}"></option>
-</select>
 </body>
 </html>
