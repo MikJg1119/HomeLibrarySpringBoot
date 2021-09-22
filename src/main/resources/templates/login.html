@@ -55,17 +55,11 @@
                 </div>
             </form>
             <div class="form-group">
-						<span th:text="#{newUser.text}"><a href="/" th:href="@{/registration}" th:text="#{registerHere.text}">Register
+						<span th:text="#{newUser.text}">New User? <a href="/" th:href="@{/registration}">Register
 								here</a></span>
             </div>
         </div>
     </div>
-    <span th:text="#{lang.change}"></span>
-    <select id="locales">
-        <option value=""></option>
-        <option value="en" th:text="#{lang.eng}"></option>
-        <option value="pl" th:text="#{lang.pl}"></option>
-    </select>
 </div>
 </body>
 </html>
