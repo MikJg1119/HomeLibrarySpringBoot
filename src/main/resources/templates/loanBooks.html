@@ -2,25 +2,25 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Add book</title>
+    <title th:text="#{addBookTitle.text}"></title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
 </head>
 <body>
 <div class="container">
-    <h1>Type name</h1>
+    <h1 th:text="#{typeName.text}"></h1>
     <div class="row">
 
     <form action="#" th:action="@{/saveLoaneeAndLoanBooks}" th:object="${loanee}" method="post">
-        <label for="newLoanee">New Loanee</label><br>
+        <label for="newLoanee" th:text="#{newLoanee.text}"></label><br>
         <input type="text" id="newLoanee" name="newLoanee"><br>
         <input type="submit" value="Submit">
     </form>
     </div>
-    <h2>Choose Name from the List</h2>
+    <h2 th:text="#{chooseNameFromList.text}"></h2>
     <table>
         <thead>
-        <th>Name</th>
+        <th th:text="#{name.text}"></th>
         </thead>
         <tbody>
         <tr th:each="loanee:${loanees}">
@@ -31,7 +31,7 @@
     </table>
     <table>
         <thead>
-        <th>Books To Be Loaned</th>
+        <th th:text="#{booksToBeLoaned.text}"></th>
         </thead>
         <tbody>
         <tr th:each="book:${booksToBeLoaned}">

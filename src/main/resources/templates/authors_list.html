@@ -9,14 +9,14 @@
 <body>
 
     <div class="container">
-        <a  class="btn btn-link" th:href ="@{/}">Books List</a>
+        <a  class="btn btn-link" th:href ="@{/}" th:text="#{booksList.text}"></a>
         <div class="row">
             <div class="col-md-6">
                 <table class="table table-striped table-bordered table-hover table-responsive-md">
                     <thead>
                     <tr>
-                        <th>Author Name</th>
-                        <th>Actions</th>
+                        <th th:text="#{authorName.text}"></th>
+                        <th th:text="#{actions.text}"></th>
                     </tr>
                     </thead>
 

@@ -2,7 +2,9 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="ISO-8859-1">
-    <title>Registration and Login App</title>
+    <title th:text="#{loginTitle.text}"></title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="internationalization.js"></script>
 
     <link rel="stylesheet"
           href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
@@ -20,28 +22,27 @@
     <div class = "row">
         <div class = "col-md-6 col-md-offset-3">
 
-            <h1> User Login Page </h1>
+            <h1 th:text="#{userLogin.text}"></h1>
             <form th:action="@{/login}" method="post">
 
                 <!-- error message -->
                 <div th:if="${param.error}">
-                    <div class="alert alert-danger">Invalid username or
-                        password.</div>
+                    <div class="alert alert-danger" th:text="#{invalidUsernameOrPassword.text}"></div>
                 </div>
 
                 <!-- logout message -->
                 <div th:if="${param.logout}">
-                    <div class="alert alert-info">You have been logged out.</div>
+                    <div class="alert alert-info" th:text="#{logout.text}"></div>
                 </div>
 
                 <div class = "form-group">
-                    <label for ="username"> Username </label> :
+                    <label for ="username" th:text="#{username.text}"></label> :
                     <input type="text" class = "form-control" id ="username" name = "username"
                            placeholder="Enter Email ID" autofocus="autofocus">
                 </div>
 
                 <div class="form-group">
-                    <label for="password">Password</label>: <input type="password"
+                    <label for="password" th:text="#{password.text}"></label>: <input type="password"
                                                                    id="password" name="password" class="form-control"
                                                                    placeholder="Enter Password" />
                 </div>
@@ -56,11 +57,16 @@
                 </div>
             </form>
             <div class="form-group">
-						<span>New user? <a href="/" th:href="@{/registration}">Register
-								here</a></span>
+						<span th:text="#{newUser.text}"><a href="/" th:href="@{/registration}" th:text="#{registerHere.text}"></a></span>
             </div>
         </div>
     </div>
 </div>
+<span th:text="#{lang.change}"></span>
+<select id="locales">
+    <option value=""></option>
+    <option value="en" th:text="#{lang.eng}"></option>
+    <option value="fr" th:text="#{lang.pl}"></option>
+</select>
 </body>
 </html>

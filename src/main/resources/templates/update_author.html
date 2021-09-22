@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Update Author</title>
+    <title th:text="{updateAuthor.text}"></title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
 </head>
@@ -11,10 +11,10 @@
     <div class="row">
         <div class="col-md-6">
             <hr>
-                <h2>Update Book</h2>
+                <h2 th:text="#{updateBook.text}"></h2>
             <form action="#" th:action="@{updateAuthor}" th:object="${author}" method="POST">
                 <input type="hidden" th:field="*{id}">
-                <button type="submit">Update Author</button>
+                <button type="submit" th:text="#{updateAuthor.text}"></button>
             </form>
             </hr>
         </div>
