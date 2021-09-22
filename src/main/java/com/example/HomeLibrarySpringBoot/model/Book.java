@@ -11,6 +11,7 @@ import org.jsoup.select.Elements;
 
 import javax.persistence.*;
 import java.io.IOException;
+import java.util.Optional;
 
 @Getter
 @Setter
@@ -78,11 +79,16 @@ public class Book {
             // getting author
             results = webSite.select("p.author");
             for (Element result : results) {
-                this.authorEntity=authorRepository.findByName(result.getElementsByTag("strong").first().text());
-                if (this.authorEntity==null) {
-                this.authorEntity = new Author(result.getElementsByTag("strong").first().text());
+                Optional<Author> author=authorRepository.findByName(result.getElementsByTag("strong").first().text());
+
+                if (author.isPresent()) {
+                   this.authorEntity=author.get();
+                }else {
+                    this.authorEntity = new Author(result.getElementsByTag("strong").first().text());
+                    authorRepository.save(authorEntity);
                 }
                 this.author = authorEntity.getName();
+
             }
             // getting publisher
             results = webSite.select("span.opt-publisher");

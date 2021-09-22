@@ -72,6 +72,7 @@ public class BookServiceImpl implements BookService{
         if (optional.isPresent()){
             book = optional.get();
         }else {
+            book=new Book();
             book.scrapeBookByIsbn(isbn);
             bookRepository.save(book);
         }
