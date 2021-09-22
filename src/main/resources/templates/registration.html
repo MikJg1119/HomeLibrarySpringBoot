@@ -21,7 +21,7 @@
                     </div>
             </div>
 
-            <h1 th:text="{registration.text}"></h1>
+            <h1 th:text="#{registration.text}"></h1>
 
             <form th:action="@{/registration}" method="post" th:object="${user}">
                 <div class="form-group">
