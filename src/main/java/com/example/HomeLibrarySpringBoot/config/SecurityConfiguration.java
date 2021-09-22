@@ -68,22 +68,21 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter implemen
     }
 
     @Bean
-    public LocaleResolver localeResolver(){
+    public LocaleResolver localeResolver() {
         SessionLocaleResolver sessionLocaleResolver = new SessionLocaleResolver();
-        sessionLocaleResolver.setDefaultLocale(Locale.ENGLISH);
-
+        sessionLocaleResolver.setDefaultLocale(Locale.US);
         return sessionLocaleResolver;
     }
 
     @Bean
-    public LocaleChangeInterceptor localeChangeInterceptor(){
+    public LocaleChangeInterceptor localeChangeInterceptor() {
         LocaleChangeInterceptor localeChangeInterceptor = new LocaleChangeInterceptor();
-        localeChangeInterceptor.setParamName("lan");
+        localeChangeInterceptor.setParamName("language");
         return localeChangeInterceptor;
     }
 
     @Override
-    public void addInterceptors(InterceptorRegistry registry){
+    public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(localeChangeInterceptor());
     }
 
