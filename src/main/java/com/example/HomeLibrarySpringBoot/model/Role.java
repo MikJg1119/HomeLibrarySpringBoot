@@ -1,6 +1,7 @@
 package com.example.HomeLibrarySpringBoot.model;
 
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
 
@@ -13,9 +14,11 @@ public class Role {
     private Long id;
     private String name;
 
+
     public Role() {
     }
 
+    @Autowired
     public Role(String name) {
         super();
         this.name = name;

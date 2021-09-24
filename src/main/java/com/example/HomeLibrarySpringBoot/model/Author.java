@@ -1,18 +1,18 @@
 package com.example.HomeLibrarySpringBoot.model;
 
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "authors")
-@AttributeOverrides({
-        @AttributeOverride(name = "id", column = @Column(name = "authorid"))
-})
 public class Author {
 
     @Column(name = "name")
@@ -23,8 +23,8 @@ public class Author {
     private int id;
 
     @OneToMany
-    @JoinColumn(name="authorid")
-    private Set<Book> booksByAuthor;
+    @JoinColumn(name="book_id", referencedColumnName = "id")
+    private Set<Book> booksByAuthor = new HashSet<Book>();
 
     @Autowired
     public Author() {

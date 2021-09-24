@@ -56,6 +56,9 @@ public class BookController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         User user = userService.getUserByName(username);
+        if (user.getBooks().isEmpty()){
+            user.setBooks(new ArrayList<Book>());
+        }
         user.getBooks().add(book);
         return "redirect:/";
     }

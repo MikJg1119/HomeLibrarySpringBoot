@@ -1,14 +1,18 @@
 package com.example.HomeLibrarySpringBoot.model;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 @Entity
 @Table(name = "Users", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
-@Data
+@Getter
+@Setter
 public class User {
 
     @Id
@@ -22,6 +26,7 @@ public class User {
     private String email;
 
     private String password;
+
 
     public User() {
     }
@@ -42,22 +47,23 @@ public class User {
             joinColumns = @JoinColumn( name = "userId", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "bookId", referencedColumnName = "id")
     )
-    private List<Book> books;
+    private List<Book> books; // = new ArrayList<Book>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(
             joinColumns = @JoinColumn( name = "userId", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "loaneeId", referencedColumnName = "id")
     )
-    private List<Loanee> loanees;
+    private List<Loanee> loanees; // = new ArrayList<Loanee>();
 
-    public User(String name, String email, String password, Collection<Role> roles, List<Book> books, List<Loanee> loanees) {
+    @Autowired
+    public User(String name, String email, String password, Collection<Role> roles) {
         this.name = name;
         this.email = email;
         this.password = password;
         this.roles = roles;
-        this.books = books;
-        this.loanees = loanees;
+        this.books = new ArrayList<Book>();
+        this.loanees = new ArrayList<Loanee>();
     }
 
     public Loanee checkIfBookIsLoaned(Book book){

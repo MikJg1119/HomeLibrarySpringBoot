@@ -5,6 +5,7 @@ import com.example.HomeLibrarySpringBoot.repository.AuthorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,7 +48,7 @@ public class AuthorServiceImpl implements AuthorService{
     }
 
     @Override
-    public Optional<Author> getAuthorByName(String name) {
+    public Optional<Author> getAuthorByName(String name) throws EntityNotFoundException {
         return authorRepository.findByName(name);
     }
 }
