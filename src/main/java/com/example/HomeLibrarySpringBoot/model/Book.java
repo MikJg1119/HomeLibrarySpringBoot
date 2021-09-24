@@ -1,7 +1,6 @@
 package com.example.HomeLibrarySpringBoot.model;
 
 
-import com.example.HomeLibrarySpringBoot.repository.AuthorRepository;
 import lombok.Getter;
 import lombok.Setter;
 import org.json.simple.JSONArray;
@@ -16,7 +15,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Optional;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
@@ -48,9 +46,10 @@ public class Book {
 //    private Author authorEntity;  //entity needed to get authorid out of authors table
 //    @Column(name ="authorid")
 //    private int authorId; //=authorEntity.getId();
-    @Transient
-    @Autowired
-    private AuthorRepository authorRepository;
+//    @Transient
+//    @Autowired
+//    private AuthorRepository authorRepository;
+
     @Column(name = "saga")
     private String saga;
     @Column(name = "publishingseries")
@@ -88,14 +87,6 @@ public class Book {
                 String authorsString = (String) jsonObject.get("author");
                 ArrayList<String> authorsArray = (ArrayList<String>) Arrays.stream(authorsString.split("\\(")).collect(Collectors.toList());
                 this.author = authorsArray.get(0);
-                try {
-                    Optional<Author> author=authorRepository.findByName(this.author);
-                    author.get().getBooksByAuthor().add(this);
-                }catch (EntityNotFoundException e){
-                    Author bookAuthor = new Author(this.author);
-                    bookAuthor.getBooksByAuthor().add(this);
-                    authorRepository.save(bookAuthor);
-                }
                 this.publishedYear = (String) jsonObject.get("publicationYear");
                 this.language=(String) jsonObject.get("language");
 

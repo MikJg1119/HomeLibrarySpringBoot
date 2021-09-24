@@ -1,5 +1,6 @@
 package com.example.HomeLibrarySpringBoot.service;
 
+import com.example.HomeLibrarySpringBoot.model.Author;
 import com.example.HomeLibrarySpringBoot.model.Book;
 import com.example.HomeLibrarySpringBoot.repository.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,9 @@ public class BookServiceImpl implements BookService{
 
     @Autowired
     private BookRepository bookRepository;
+
+    @Autowired
+    private AuthorService authorService;
 
     @Autowired
     private UserService userService;
@@ -74,6 +78,14 @@ public class BookServiceImpl implements BookService{
         }else {
             book=new Book();
             book.scrapeBookByIsbn(isbn);
+            Optional<Author> author=authorService.getAuthorByName(book.getAuthor());
+            if (author.isPresent()) {
+                author.get().getBooksByAuthor().add(book);
+            }else {
+                Author bookAuthor = new Author(book.getAuthor());
+                bookAuthor.getBooksByAuthor().add(book);
+                authorService.addAuthor(bookAuthor);
+            }
             bookRepository.save(book);
         }
         return book;

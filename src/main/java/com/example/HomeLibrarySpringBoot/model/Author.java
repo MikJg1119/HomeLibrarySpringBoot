@@ -24,15 +24,16 @@ public class Author {
 
     @OneToMany
     @JoinColumn(name="book_id", referencedColumnName = "id")
-    private Set<Book> booksByAuthor = new HashSet<Book>();
+    private Set<Book> booksByAuthor;
 
     @Autowired
     public Author() {
+        this.booksByAuthor=new HashSet<Book>();
     }
 
     public Author(String author) {
         this.name = author;
-
+        this.booksByAuthor=new HashSet<Book>();
     }
 
 
