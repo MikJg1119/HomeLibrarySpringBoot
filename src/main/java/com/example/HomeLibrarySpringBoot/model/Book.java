@@ -44,8 +44,8 @@ public class Book {
 //    @ManyToOne
 //    @JoinColumn(name = "authorid", insertable = false, updatable = false)
 //    private Author authorEntity;  //entity needed to get authorid out of authors table
-//    @Column(name ="authorid")
-//    private int authorId; //=authorEntity.getId();
+    @Column(name ="authorid")
+    private int authorId; //=authorEntity.getId();
 //    @Transient
 //    @Autowired
 //    private AuthorRepository authorRepository;

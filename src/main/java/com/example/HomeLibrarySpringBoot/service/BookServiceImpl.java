@@ -81,9 +81,11 @@ public class BookServiceImpl implements BookService{
             Optional<Author> author=authorService.getAuthorByName(book.getAuthor());
             if (author.isPresent()) {
                 author.get().getBooksByAuthor().add(book);
+                book.setAuthorId(author.get().getId());
             }else {
                 Author bookAuthor = new Author(book.getAuthor());
                 bookAuthor.getBooksByAuthor().add(book);
+                book.setAuthorId(bookAuthor.getId());
                 authorService.addAuthor(bookAuthor);
             }
             bookRepository.save(book);
