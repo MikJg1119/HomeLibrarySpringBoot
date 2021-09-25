@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -30,14 +31,20 @@ public class BookController {
     @Autowired
     private UsersLibraryService usersLibraryService;
 
+    private List<Book> booksToBeLoaned;
+
     @GetMapping("/")
     public String booksList(Model model){
+        booksToBeLoaned=new ArrayList<Book>();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         User user = userService.getUserByEmail(username);
         List<Book> books;
-        books=usersLibraryService.getUsersLibraryByUser(user).getBooks();
+        UsersLibrary usersLibrary = usersLibraryService.getUsersLibraryByUser(user);
+        books=usersLibrary.getBooks();
         model.addAttribute("books", books);
+        model.addAttribute("usersLibrary", usersLibrary);
+        model.addAttribute("booksToBeLoaned", booksToBeLoaned);
         return "index";
     }
 

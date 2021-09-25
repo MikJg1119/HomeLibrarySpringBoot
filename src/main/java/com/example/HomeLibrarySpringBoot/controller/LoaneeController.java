@@ -33,7 +33,8 @@ public class LoaneeController {
     @Autowired
     UsersLibraryService usersLibraryService;
 
-    private List<Book> booksToBeLoaned;
+
+    private List<Book> booksToBeLoaned=new ArrayList<Book>();
 
     @GetMapping("/loanBooksForm")
     public String loanBooks(@RequestParam(value = "loan") int [] booksToBeLoanedId, BindingResult bindingResult, Model model){
