@@ -2,8 +2,10 @@ package com.example.HomeLibrarySpringBoot.controller;
 
 import com.example.HomeLibrarySpringBoot.model.Book;
 import com.example.HomeLibrarySpringBoot.model.User;
+import com.example.HomeLibrarySpringBoot.model.UsersLibrary;
 import com.example.HomeLibrarySpringBoot.service.BookService;
 import com.example.HomeLibrarySpringBoot.service.UserService;
+import com.example.HomeLibrarySpringBoot.service.UsersLibraryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,7 +16,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -26,21 +27,18 @@ public class BookController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private UsersLibraryService usersLibraryService;
+
     @GetMapping("/")
     public String booksList(Model model){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-        User user = userService.getUserByName(username);
+        User user = userService.getUserByEmail(username);
         List<Book> books;
-        try {
-            books=user.getBooks();
-        }catch (NullPointerException e){
-            books=new ArrayList<Book>();
-//            user.setBooks(books);
-//            return "redirect:/addBook";
-        }
+        books=usersLibraryService.getUsersLibraryByUser(user).getBooks();
         model.addAttribute("books", books);
-                return "index";
+        return "index";
     }
 
     @GetMapping("/addBook")
@@ -55,11 +53,10 @@ public class BookController {
         Book book = bookService.getBookByIsbn(isbn);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-        User user = userService.getUserByName(username);
-        if (user.getBooks().isEmpty()){
-            user.setBooks(new ArrayList<Book>());
-        }
-        user.getBooks().add(book);
+        User user = userService.getUserByEmail(username);
+        UsersLibrary usersLibrary = usersLibraryService.getUsersLibraryByUser(user);
+       usersLibrary.getBooks().add(book);
+        usersLibraryService.save(usersLibrary);
         return "redirect:/";
     }
 
@@ -81,8 +78,9 @@ public class BookController {
     public String deleteBook(@PathVariable(value = "id") int id){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-        User user = userService.getUserByName(username);
-        user.getBooks().remove(id);
+        User user = userService.getUserByEmail(username);
+        usersLibraryService.getBooksByUser(user).remove(id);
+
 
         return "redirect:/";
     }

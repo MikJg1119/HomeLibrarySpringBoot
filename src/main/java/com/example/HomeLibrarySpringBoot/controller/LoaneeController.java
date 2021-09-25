@@ -6,6 +6,7 @@ import com.example.HomeLibrarySpringBoot.model.User;
 import com.example.HomeLibrarySpringBoot.service.BookService;
 import com.example.HomeLibrarySpringBoot.service.LoaneeService;
 import com.example.HomeLibrarySpringBoot.service.UserService;
+import com.example.HomeLibrarySpringBoot.service.UsersLibraryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -29,6 +30,9 @@ public class LoaneeController {
     @Autowired
     UserService userService;
 
+    @Autowired
+    UsersLibraryService usersLibraryService;
+
     private List<Book> booksToBeLoaned;
 
     @GetMapping("/loanBooksForm")
@@ -41,9 +45,9 @@ public class LoaneeController {
         }
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-        User user = userService.getUserByName(username);
+        User user = userService.getUserByEmail(username);
         model.addAttribute("booksToBeLoaned",booksToBeLoaned);
-        model.addAttribute("loanees",user.getLoanees());
+        model.addAttribute("loanees",usersLibraryService.getLoaneesByUser(user));
         return "/loanBooks";
     }
     @PostMapping("/loanBooksToLoanee/{id}")
@@ -54,13 +58,14 @@ public class LoaneeController {
         loaneeService.loanBook(booksToBeLoaned,id);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-        User user = userService.getUserByName(username);
+        User user = userService.getUserByEmail(username);
         List<Loanee> usersLoanees;
         try {
-            usersLoanees = user.getLoanees();
+            usersLoanees = usersLibraryService.getUsersLibraryByUser(user).getLoanees();
         }catch (NullPointerException e){
             usersLoanees = new ArrayList<Loanee>();
-            user.getLoanees().addAll(usersLoanees);
+            usersLibraryService.getUsersLibraryByUser(user).setLoanees(usersLoanees);
+
         }
         Loanee loanee = loaneeService.getLoanee(id);
         if(!usersLoanees.contains(loanee)){
@@ -77,8 +82,8 @@ public class LoaneeController {
         loaneeService.addLoanee(loanee);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-        User user = userService.getUserByName(username);
-        user.getLoanees().add(loanee);
+        User user = userService.getUserByEmail(username);
+        usersLibraryService.getLoaneesByUser(user).add(loanee);
         loaneeService.loanBook(booksToBeLoaned,loanee.getId());
 
         return "redirect:/";
@@ -96,9 +101,9 @@ public class LoaneeController {
         Book book = bookService.getBook(bookId);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-        User user = userService.getUserByName(username);
+        User user = userService.getUserByEmail(username);
 
-        Loanee loanee = user.checkIfBookIsLoaned(book);
+        Loanee loanee = usersLibraryService.getUsersLibraryByUser(user).checkIfBookIsLoaned(book);
         loanee.returnLoanedBook(book);
         model.addAttribute("loanee", loanee.getName());
         model.addAttribute("loanedBooks", loanee.getLoanedBooks());
@@ -109,8 +114,8 @@ public class LoaneeController {
     public String getLoaneesList(Model model){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-        User user = userService.getUserByName(username);
-        model.addAttribute("loanees",user.getLoanees());
+        User user = userService.getUserByEmail(username);
+        model.addAttribute("loanees",usersLibraryService.getUsersLibraryByUser(user).getLoanees());
         return "/loanees_list";
     }
 

@@ -3,6 +3,7 @@ package com.example.HomeLibrarySpringBoot.service;
 import com.example.HomeLibrarySpringBoot.controller.dto.UserRegistrationDto;
 import com.example.HomeLibrarySpringBoot.model.Role;
 import com.example.HomeLibrarySpringBoot.model.User;
+import com.example.HomeLibrarySpringBoot.model.UsersLibrary;
 import com.example.HomeLibrarySpringBoot.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -23,6 +24,9 @@ public class UserServiceImpl implements UserService{
     private UserRepository userRepository;
 
     @Autowired
+    private UsersLibraryService usersLibraryService;
+
+    @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
     @Override
@@ -30,8 +34,12 @@ public class UserServiceImpl implements UserService{
         User user = new User(registrationDto.getName(),
                 registrationDto.getEmail(),
                 passwordEncoder.encode(registrationDto.getPassword()), Arrays.asList(new Role("ROLE_USER")));
-
-        return userRepository.save(user);
+        userRepository.save(user);
+        UsersLibrary usersLibrary = new UsersLibrary(user);
+        usersLibraryService.save(usersLibrary);
+//            user.setLoanees(new ArrayList<Loanee>());
+//            user.setBooks(new ArrayList<Book>());
+        return user;
     }
 
     @Override
@@ -60,5 +68,32 @@ public class UserServiceImpl implements UserService{
         return user;
     }
 
-
+    @Override
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+    //    @Override
+//    public void addBookToUser(User user, Book book) {
+//       try {
+//           user.getBooks().add(book);
+//       }catch (NullPointerException e){
+//           this.setBooks(user, new ArrayList<Book>());
+//           userRepository.save(user);
+//           user.getBooks().add(book);
+//           userRepository.save(user);
+//       }
+//
+//    }
+//
+//    @Override
+//    public void setBooks(User user, List<Book> books) {
+//        user.setBooks(books);
+////        this.updateUser(user);
+//    }
+//
+//    @Override
+//    public void setLoanees(User user, List<Loanee> loanees) {
+//        user.setLoanees(loanees);
+////        this.updateUser(user);
+//    }
 }

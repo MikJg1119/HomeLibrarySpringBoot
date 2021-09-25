@@ -2,12 +2,12 @@ package com.example.HomeLibrarySpringBoot.model;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 @Entity
 @Table(name = "Users", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
@@ -16,6 +16,7 @@ import java.util.List;
 public class User {
 
     @Id
+    @Generated(GenerationTime.INSERT)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
@@ -28,8 +29,7 @@ public class User {
     private String password;
 
 
-    public User() {
-    }
+
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
@@ -42,36 +42,26 @@ public class User {
 
 
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(
-            joinColumns = @JoinColumn( name = "userId", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "bookId", referencedColumnName = "id")
-    )
-    private List<Book> books; // = new ArrayList<Book>();
+     // = new ArrayList<Loanee>();
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(
-            joinColumns = @JoinColumn( name = "userId", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "loaneeId", referencedColumnName = "id")
-    )
-    private List<Loanee> loanees; // = new ArrayList<Loanee>();
-
+    public User() {
+//        if (this.books==null){
+//            this.books=new ArrayList<Book>();
+//
+//        }
+//        if (this.loanees==null){
+//            this.loanees=new ArrayList<Loanee>();
+//        }
+    }
     @Autowired
     public User(String name, String email, String password, Collection<Role> roles) {
         this.name = name;
         this.email = email;
         this.password = password;
         this.roles = roles;
-        this.books = new ArrayList<Book>();
-        this.loanees = new ArrayList<Loanee>();
+//        this.books = new ArrayList<Book>();
+//        this.loanees = new ArrayList<Loanee>();
     }
 
-    public Loanee checkIfBookIsLoaned(Book book){
-        for (Loanee loanee : loanees){
-            if (loanee.getLoanedBooks().contains(book)){
-                return loanee;
-            }
-        }
-        return null;
-    }
+
 }

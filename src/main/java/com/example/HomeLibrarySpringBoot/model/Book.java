@@ -3,6 +3,8 @@ package com.example.HomeLibrarySpringBoot.model;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -39,16 +41,15 @@ public class Book {
     @Column(name = "language")
     private String language;
     @Id
+    @Column(columnDefinition = "serial")
+    @Generated(GenerationTime.INSERT)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 //    @ManyToOne
 //    @JoinColumn(name = "authorid", insertable = false, updatable = false)
 //    private Author authorEntity;  //entity needed to get authorid out of authors table
-    @Column(name ="authorid")
-    private int authorId; //=authorEntity.getId();
-//    @Transient
-//    @Autowired
-//    private AuthorRepository authorRepository;
+//    @Column(name ="authorid")
+//    private int authorId; //=authorEntity.getId();
 
     @Column(name = "saga")
     private String saga;

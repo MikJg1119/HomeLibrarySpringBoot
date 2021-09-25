@@ -1,6 +1,8 @@
 package com.example.HomeLibrarySpringBoot.model;
 
 import lombok.Data;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
@@ -10,6 +12,8 @@ import javax.persistence.*;
 @Data
 public class Role {
     @Id
+    @Column(columnDefinition = "serial")
+    @Generated(GenerationTime.INSERT)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;

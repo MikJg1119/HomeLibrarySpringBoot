@@ -2,6 +2,8 @@ package com.example.HomeLibrarySpringBoot.model;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
@@ -14,6 +16,8 @@ import java.util.List;
 public class Loanee {
 
     @Id
+    @Column(columnDefinition = "serial")
+    @Generated(GenerationTime.INSERT)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @Getter

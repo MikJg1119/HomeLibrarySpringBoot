@@ -3,11 +3,13 @@ package com.example.HomeLibrarySpringBoot.model;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -19,21 +21,23 @@ public class Author {
     private String name;
 
     @Id
+    @Column(columnDefinition = "serial")
+    @Generated(GenerationTime.INSERT)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @OneToMany
-    @JoinColumn(name="book_id", referencedColumnName = "id")
-    private Set<Book> booksByAuthor;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval=true, fetch=FetchType.LAZY)
+//    @JoinColumn(name="book_id", referencedColumnName = "id")
+    private List<Book> booksByAuthor;
 
     @Autowired
     public Author() {
-        this.booksByAuthor=new HashSet<Book>();
+//        this.booksByAuthor=new ArrayList<Book>();
     }
 
     public Author(String author) {
         this.name = author;
-        this.booksByAuthor=new HashSet<Book>();
+        this.booksByAuthor=new ArrayList<Book>();
     }
 
 
