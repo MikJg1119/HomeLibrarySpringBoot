@@ -24,14 +24,17 @@ public class UsersLibrary {
     @OneToOne
     private User user;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+
+    @JoinColumn
+    @OneToMany(cascade = {CascadeType.ALL})
     @JoinTable(
             joinColumns = @JoinColumn( name = "userLibraryId", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "bookId", referencedColumnName = "id")
     )
     private List<Book> books = new ArrayList<Book>();
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+
+    @OneToMany(cascade = {CascadeType.ALL})
     @JoinTable(
             joinColumns = @JoinColumn( name = "userLibraryId", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "loaneeId", referencedColumnName = "id")

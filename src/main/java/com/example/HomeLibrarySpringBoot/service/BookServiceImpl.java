@@ -74,25 +74,24 @@ public class BookServiceImpl implements BookService{
         Optional<Book> optional = bookRepository.findByIsbn(isbn);
         Book book = null;
         if (optional.isPresent()){
-            book = optional.get();
+            return book = optional.get();
         }else {
-            book=new Book();
+            book = new Book();
             book.scrapeBookByIsbn(isbn);
+            bookRepository.save(book);
+        }
+        Optional<Author> author=authorService.getAuthorByName(book.getAuthor());
+        if (author.isPresent()) {
+        author.get().getBooksByAuthor().add(book);
 
-            Optional<Author> author=authorService.getAuthorByName(book.getAuthor());
-            if (author.isPresent()) {
-                author.get().getBooksByAuthor().add(book);
-                bookRepository.save(book);
-//                book.setAuthorId(author.get().getId());
-                authorService.updateAuthor(author.get());
-            }else {
-                Author bookAuthor = new Author(book.getAuthor());
-                bookAuthor.getBooksByAuthor().add(book);
-                bookRepository.save(book);
+//      book.setAuthorId(author.get().getId());
+        authorService.updateAuthor(author.get());
+        }else {
+        Author bookAuthor = new Author(book.getAuthor());
+        bookAuthor.getBooksByAuthor().add(book);
+//                bookRepository.save(book);
 //                book.setAuthorId(bookAuthor.getId());
-                authorService.addAuthor(bookAuthor);
-            }
-
+        authorService.addAuthor(bookAuthor);
         }
         return book;
     }
