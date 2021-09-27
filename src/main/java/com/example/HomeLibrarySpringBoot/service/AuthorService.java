@@ -1,6 +1,7 @@
 package com.example.HomeLibrarySpringBoot.service;
 
 import com.example.HomeLibrarySpringBoot.model.Author;
+import com.example.HomeLibrarySpringBoot.model.User;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,4 +14,5 @@ public interface AuthorService {
     List<Author> getAuthors();
     List<Author> getAuthorsById(Iterable<Integer> ids);
     Optional<Author> getAuthorByName(String name);
+    List<Author> getAuthorsByUser(User user);
 }

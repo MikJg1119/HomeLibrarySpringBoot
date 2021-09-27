@@ -100,7 +100,12 @@ public class Book {
         return this;
     }
 
-//        try{
+    @Override
+    public boolean equals(Object obj) {
+        return this.isbn.equals(((Book) obj).getIsbn());
+    }
+
+    //        try{
 //
 //            Document webSite = Jsoup.connect(urlBuild.toString()).userAgent("mozilla/17.0").get(); //connection to the website
 //            // getting title based on ISBN

@@ -17,33 +17,46 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 public class LoaneeController {
 
-    @Autowired
-    LoaneeService loaneeService;
+//    @Autowired
+    private LoaneeService loaneeService;
 
-    @Autowired
-    BookService bookService;
+//    @Autowired
+    private BookService bookService;
 
-    @Autowired
-    UserService userService;
+//    @Autowired
+    private UserService userService;
 
-    @Autowired
-    UsersLibraryService usersLibraryService;
-
+//    @Autowired
+    private UsersLibraryService usersLibraryService;
 
     private List<Book> booksToBeLoaned=new ArrayList<Book>();
 
+    @Autowired
+    public LoaneeController(LoaneeService loaneeService, BookService bookService, UserService userService, UsersLibraryService usersLibraryService) {
+        this.loaneeService = loaneeService;
+        this.bookService = bookService;
+        this.userService = userService;
+        this.usersLibraryService = usersLibraryService;
+    }
+
+
+
     @GetMapping("/loanBooksForm")
     public String loanBooks(@RequestParam(value = "loan") int [] booksToBeLoanedId, BindingResult bindingResult, Model model){
+        if (booksToBeLoanedId.length==0){
+            return "redirect:/";
+        }
 
         for(int i : booksToBeLoanedId){
             booksToBeLoaned.add(bookService.getBook(i));
 
-
         }
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         User user = userService.getUserByEmail(username);
@@ -61,13 +74,9 @@ public class LoaneeController {
         String username = authentication.getName();
         User user = userService.getUserByEmail(username);
         List<Loanee> usersLoanees;
-        try {
-            usersLoanees = usersLibraryService.getUsersLibraryByUser(user).getLoanees();
-        }catch (NullPointerException e){
-            usersLoanees = new ArrayList<Loanee>();
-            usersLibraryService.getUsersLibraryByUser(user).setLoanees(usersLoanees);
+        usersLoanees = usersLibraryService.getUsersLibraryByUser(user).getLoanees();
 
-        }
+
         Loanee loanee = loaneeService.getLoanee(id);
         if(!usersLoanees.contains(loanee)){
             usersLoanees.add(loanee);
@@ -92,8 +101,13 @@ public class LoaneeController {
 
     @PostMapping("/loanedBooksListByLoanee/{id}")
     public String listOfBooksLoanedByLoanee(@PathVariable(value = "id") int id, Model model){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User user = userService.getUserByEmail(username);
+        List<Book> usersBooks= usersLibraryService.getBooksByUser(user);
+        List<Book> loanedBooksByLoanee = (loaneeService.getLoanee(id).getLoanedBooks().stream().filter(e ->usersBooks.contains(e)).collect(Collectors.toList()));
         model.addAttribute("loanee", loaneeService.getLoanee(id).getName());
-        model.addAttribute("loanedBooks", loaneeService.getLoanee(id).getLoanedBooks());
+        model.addAttribute("loanedBooks", loanedBooksByLoanee);
         return "/books";
     }
 

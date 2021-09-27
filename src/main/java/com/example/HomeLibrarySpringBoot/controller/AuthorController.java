@@ -1,8 +1,13 @@
 package com.example.HomeLibrarySpringBoot.controller;
 
 import com.example.HomeLibrarySpringBoot.model.Author;
+import com.example.HomeLibrarySpringBoot.model.User;
 import com.example.HomeLibrarySpringBoot.service.AuthorService;
+import com.example.HomeLibrarySpringBoot.service.UserService;
+import com.example.HomeLibrarySpringBoot.service.UsersLibraryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,9 +23,18 @@ public class AuthorController {
     @Autowired
     AuthorService authorService;
 
+    @Autowired
+    UsersLibraryService usersLibraryService;
+
+    @Autowired
+    UserService userService;
+
     @GetMapping("/authors")
     public String booksList(Model model){
-        List<Author> authors =authorService.getAuthors();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User user = userService.getUserByEmail(username);
+        List<Author> authors =authorService.getAuthorsByUser(user);
         model.addAttribute("authors", authors);
         return "authors_list";
     }

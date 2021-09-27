@@ -22,16 +22,23 @@ import java.util.List;
 @Controller
 public class BookController {
 
-    @Autowired
+//    @Autowired
     private BookService bookService;
 
-    @Autowired
+//    @Autowired
     private UserService userService;
 
-    @Autowired
+//    @Autowired
     private UsersLibraryService usersLibraryService;
 
-    private List<Book> booksToBeLoaned;
+    private List<Book> booksToBeLoaned=new ArrayList<Book>();
+
+    @Autowired
+    public BookController(BookService bookService, UserService userService, UsersLibraryService usersLibraryService) {
+        this.bookService = bookService;
+        this.userService = userService;
+        this.usersLibraryService = usersLibraryService;
+    }
 
     @GetMapping("/")
     public String booksList(Model model){
