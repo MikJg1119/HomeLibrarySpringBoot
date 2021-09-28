@@ -93,7 +93,9 @@ public class BookController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         User user = userService.getUserByEmail(username);
-        usersLibraryService.getBooksByUser(user).remove(id);
+        UsersLibrary usersLibrary = usersLibraryService.getUsersLibraryByUser(user);
+        usersLibrary.getBooks().remove(id);
+        usersLibraryService.save(usersLibrary);
 
 
         return "redirect:/";

@@ -30,6 +30,7 @@ public class AuthorServiceImpl implements AuthorService{
 
     @Override
     public void removeAuthor(int id) {
+
     authorRepository.deleteById(id);
     }
 

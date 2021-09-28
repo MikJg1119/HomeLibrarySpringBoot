@@ -24,7 +24,7 @@
                         <tr th:each="author:${authors}">
                             <td th:text="${author.name}"></td>
                             <td><a type="button" class="btn btn-info" th:href="@{/showFormForAuthorUpdate/{id}(id=${author.id})}">Update</a></td>
-                            <td><a type="button" class="btn btn-danger" th:href="@{/deleteBook/{id}(id=${book.id})}">Delete</a></td>
+                            <td><a type="button" class="btn btn-info" th:href="@{/showAuthorsBooks/{id}(id=${author.id})}">Show Authors Books</a></td>
                         </tr>
                     </tbody>
 
