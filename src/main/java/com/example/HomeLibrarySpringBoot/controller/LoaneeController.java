@@ -47,7 +47,8 @@ public class LoaneeController {
 
 
     @GetMapping("/loanBooksForm")
-    public String loanBooks(@RequestParam(value = "booksToBeLoaned") int [] booksToBeLoanedId, BindingResult bindingResult, Model model){
+    public String loanBooks(@ModelAttribute(value = "booksToBeLoaned") int [] booksToBeLoanedId, BindingResult bindingResult, Model model){
+
         if (booksToBeLoanedId.length==0){
             return "redirect:/";
         }

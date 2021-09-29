@@ -9,7 +9,7 @@
 <body>
 <hr>
     <h2 th:text="#{updateBook.text}"></h2>
-<form action="#" th:action="@{updateBook}" th:object="${book}" method="POST">
+<form action="#" th:action="@{/updateBook}" th:object="${book}" method="POST">
     <input type="hidden" th:field="*{id}">
     <input type="text" th:field="*{title}">
     <input type="text" th:field="*{author}" >
