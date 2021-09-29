@@ -13,9 +13,13 @@
     <input type="hidden" th:field="*{id}">
     <label th:text="Title.text"></label>
     <input type="text" th:field="*{title}" th:label="Title">
+    <label th:text="Author.text"></label>
     <input type="text" th:field="*{author}" th:label="Author">
+    <label th:text="isbn.text"></label>
     <input type="text" th:field="*{isbn}" th:label="ISBN">
+    <label th:text="Publisher.text"></label>
     <input type="text" th:field="*{publisher}" th:label="Publisher">
+    <label th:text="PublishedYear.text"></label>
     <input type="number" th:field="*{publishedYear}" th:label="PublishedYear">
     <button type="submit" th:text="#{updateBook.text}"></button>
 </form>
