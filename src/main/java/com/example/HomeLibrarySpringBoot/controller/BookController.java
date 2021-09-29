@@ -65,6 +65,10 @@ public class BookController {
     @PostMapping("/saveBook")
     public String saveBook(@ModelAttribute("isbn") String isbn){
         Book book = bookService.getBookByIsbn(isbn);
+        if (book.getTitle().equals("")){
+
+            return "redirect:/showFormForUpdate/"+book.getId();
+        }
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         User user = userService.getUserByEmail(username);

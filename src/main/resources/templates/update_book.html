@@ -11,11 +11,12 @@
     <h2 th:text="#{updateBook.text}"></h2>
 <form action="#" th:action="@{/updateBook}" th:object="${book}" method="POST">
     <input type="hidden" th:field="*{id}">
-    <input type="text" th:field="*{title}">
-    <input type="text" th:field="*{author}" >
-    <input type="text" th:field="*{isbn}" >
-    <input type="text" th:field="*{publisher}">
-    <input type="number" th:field="*{publishedYear}">
+    <label th:text="Title.text"></label>
+    <input type="text" th:field="*{title}" th:label="Title">
+    <input type="text" th:field="*{author}" th:label="Author">
+    <input type="text" th:field="*{isbn}" th:label="ISBN">
+    <input type="text" th:field="*{publisher}" th:label="Publisher">
+    <input type="number" th:field="*{publishedYear}" th:label="PublishedYear">
     <button type="submit" th:text="#{updateBook.text}"></button>
 </form>
 </hr>

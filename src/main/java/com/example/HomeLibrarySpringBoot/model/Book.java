@@ -75,22 +75,34 @@ public class Book  {
             int responseCode = connection.getResponseCode();
             String response="";
             if (responseCode==HttpURLConnection.HTTP_OK){
-                Scanner scanner= new Scanner(url.openStream());
-                while (scanner.hasNext()){
-                    response+=scanner.nextLine();
-                }
-                JSONParser parser = new JSONParser();
-                JSONObject obj = (JSONObject) parser.parse(response);
-                JSONArray jsonArray = (JSONArray) obj.get("bibs");
-                JSONObject jsonObject = (JSONObject) jsonArray.get(0);
-                this.title= (String) jsonObject.get("title");
-                this.publisher = (String) jsonObject.get("publisher");
-                String authorsString = (String) jsonObject.get("author");
-                ArrayList<String> authorsArray = (ArrayList<String>) Arrays.stream(authorsString.split("\\(")).collect(Collectors.toList());
-                this.author = authorsArray.get(0);
-                this.publishedYear = (String) jsonObject.get("publicationYear");
-                this.language=(String) jsonObject.get("language");
+               try {
+                   Scanner scanner= new Scanner(url.openStream());
+                   while (scanner.hasNext()){
+                       response+=scanner.nextLine();
+                   }
+                   JSONParser parser = new JSONParser();
+                   JSONObject obj = (JSONObject) parser.parse(response);
+                   JSONArray jsonArray = (JSONArray) obj.get("bibs");
+                   JSONObject jsonObject = (JSONObject) jsonArray.get(0);
+                   this.title= (String) jsonObject.get("title");
+                   this.publisher = (String) jsonObject.get("publisher");
+                   String authorsString = (String) jsonObject.get("author");
+                   ArrayList<String> authorsArray = (ArrayList<String>) Arrays.stream(authorsString.split("\\(")).collect(Collectors.toList());
+                   this.author = authorsArray.get(0);
+                   this.publishedYear = (String) jsonObject.get("publicationYear");
+                   this.language=(String) jsonObject.get("language");
+                   this.saga = "";
+                   this.publishingSeries = "";
+               }catch (IndexOutOfBoundsException e){
+                   this.saga = "";
+                   this.publishingSeries = "";
+                   this.language = "";
+                   this.publishedYear="";
+                   this.author="";
+                   this.title="";
+                   this.publisher="";
 
+               }
             }
         } catch (IOException e){
             e.getMessage();
