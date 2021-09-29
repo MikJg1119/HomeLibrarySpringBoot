@@ -41,7 +41,17 @@ public class AuthorServiceImpl implements AuthorService{
 
     @Override
     public void updateAuthor(Author author) {
-    authorRepository.save(author);
+        Optional<Author> optionalAuthor = authorRepository.findById(author.getId());
+        if (optionalAuthor.isPresent()){
+            Author fromDb = optionalAuthor.get();
+            fromDb.setId(author.getId());
+            fromDb.setBooksByAuthor(author.getBooksByAuthor());
+            fromDb.setName(author.getName());
+
+            authorRepository.save(fromDb);
+        }else {
+            authorRepository.save(author);
+        }
     }
 
     @Override

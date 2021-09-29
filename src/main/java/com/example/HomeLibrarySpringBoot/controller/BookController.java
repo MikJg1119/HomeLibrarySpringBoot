@@ -74,9 +74,14 @@ public class BookController {
         return "redirect:/";
     }
 
-    @PostMapping("/updateBook") // different handling method for update, not to overwrite the data with new ISBN search
+    @PostMapping("/updateBook")
     public String updateBook(@ModelAttribute("book") Book book){
         bookService.updateBook(book);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User user = userService.getUserByEmail(username);
+        UsersLibrary usersLibrary = usersLibraryService.getUsersLibraryByUser(user);
+        usersLibrary.getBooks().add(book.getId(),book);
         return "redirect:/";
     }
 

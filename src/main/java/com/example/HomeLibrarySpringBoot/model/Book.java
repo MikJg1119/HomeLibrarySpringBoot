@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 @Setter
 @Entity
 @Table(name = "books")
-public class Book {
+public class Book  {
 
     @Column(name = "title")
     private String title;

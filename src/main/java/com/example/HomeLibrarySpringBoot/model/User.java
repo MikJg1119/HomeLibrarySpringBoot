@@ -7,13 +7,14 @@ import org.hibernate.annotations.GenerationTime;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Collection;
 
 @Entity
 @Table(name = "Users", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
 @Getter
 @Setter
-public class User {
+public class User implements Serializable {
 
     @Id
     @Generated(GenerationTime.INSERT)

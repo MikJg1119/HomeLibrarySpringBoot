@@ -15,7 +15,7 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "authors")
-public class Author {
+public class Author{
 
     @Column(name = "name")
     private String name;

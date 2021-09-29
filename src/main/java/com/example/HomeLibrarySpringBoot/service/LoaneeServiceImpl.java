@@ -57,7 +57,10 @@ public class LoaneeServiceImpl implements LoaneeService{
 
     @Override
     public void returnLoanedBook(List<Book> booksToBeReturned, int loaneeId) {
-        loaneeRepository.getById(loaneeId).returnLoanedBook(booksToBeReturned);
+        Loanee loanee = loaneeRepository.getById(loaneeId);
+        loanee.setLoanedBooks(loanee.returnLoanedBook(booksToBeReturned));
+        loaneeRepository.save(loanee);
+//        loaneeRepository.getById(loaneeId).returnLoanedBook(booksToBeReturned);
     }
 
     @Override

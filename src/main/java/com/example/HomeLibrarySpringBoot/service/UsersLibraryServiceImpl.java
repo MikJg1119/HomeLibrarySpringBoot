@@ -28,12 +28,16 @@ public class UsersLibraryServiceImpl implements UsersLibraryService {
 
     @Override
     public void setBooks(User user, List<Book> books) {
-        usersLibraryRepository.findByUser(user).setBooks(books);
+       UsersLibrary userDb = usersLibraryRepository.findByUser(user);
+       userDb.setBooks(books);
+       usersLibraryRepository.save(userDb);
     }
 
     @Override
     public void setLoanees(User user, List<Loanee> loanees) {
-        usersLibraryRepository.findByUser(user).setLoanees(loanees);
+        UsersLibrary userDb = usersLibraryRepository.findByUser(user);
+        userDb.setLoanees(loanees);
+        usersLibraryRepository.save(userDb);
     }
 
     @Override

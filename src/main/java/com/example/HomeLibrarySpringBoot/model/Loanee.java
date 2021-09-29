@@ -50,10 +50,10 @@ public class Loanee {
     public void returnLoanedBook(Book book){
         loanedBooks.remove(book);
     }
-    public void returnLoanedBook(List<Book> booksToBeReturned){
-        for (Book book : booksToBeReturned){
-            returnLoanedBook(book);
-        }
+    public List<Book> returnLoanedBook(List<Book> booksToBeReturned){
+
+        loanedBooks.removeAll(booksToBeReturned);
+        return loanedBooks;
 
     }
 }
