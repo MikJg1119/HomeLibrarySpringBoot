@@ -103,7 +103,7 @@ public class BookController {
         String username = authentication.getName();
         User user = userService.getUserByEmail(username);
         UsersLibrary usersLibrary = usersLibraryService.getUsersLibraryByUser(user);
-        usersLibrary.getBooks().remove(id);
+        usersLibrary.getBooks().remove(bookService.getBook(id));
         usersLibraryService.save(usersLibrary);
 
 

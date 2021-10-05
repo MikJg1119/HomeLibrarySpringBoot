@@ -8,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 @Getter
@@ -41,6 +43,15 @@ public class UsersLibrary {
     )
     private List<Loanee> loanees = new ArrayList<Loanee>();
 
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "loanee_book_mapping",
+            joinColumns = {@JoinColumn(name = "usersLibraryId", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "bookId", referencedColumnName = "id")})
+    @MapKeyJoinColumn(name = "loaneeId")
+    private Map<Book,Loanee> booksLoanedToLoanees =new HashMap<>();
+
+
     public UsersLibrary() {
 //        this.books=new ArrayList<Book>();
 //        this.loanees=new ArrayList<Loanee>();
@@ -54,11 +65,12 @@ public class UsersLibrary {
     }
 
     public Loanee checkIfBookIsLoaned(Book book){
-        for (Loanee loanee : loanees){
-            if (loanee.getLoanedBooks().contains(book)){
-                return loanee;
-            }
-        }
-        return null;
+//        for (Loanee loanee : loanees){
+//            if (loanee.getLoanedBooks().contains(book)){
+//                return loanee;
+//            }
+//        }
+        booksLoanedToLoanees.get(book);
+        return booksLoanedToLoanees.get(book);
     }
 }

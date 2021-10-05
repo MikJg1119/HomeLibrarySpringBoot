@@ -12,7 +12,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -20,6 +19,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
+
 public class LoaneeController {
 
 //    @Autowired
@@ -34,7 +34,9 @@ public class LoaneeController {
 //    @Autowired
     private UsersLibraryService usersLibraryService;
 
-    private List<Book> booksToBeLoaned=new ArrayList<Book>();
+
+
+    public List<Book> booksToBeLoaned=new ArrayList<Book>();
 
     @Autowired
     public LoaneeController(LoaneeService loaneeService, BookService bookService, UserService userService, UsersLibraryService usersLibraryService) {
@@ -43,11 +45,8 @@ public class LoaneeController {
         this.userService = userService;
         this.usersLibraryService = usersLibraryService;
     }
-
-
-
-    @GetMapping("/loanBooksForm")
-    public String loanBooks(@ModelAttribute(value = "booksToBeLoaned") int [] booksToBeLoanedId, BindingResult bindingResult, Model model){
+    @PostMapping("/loanBooksForm")
+    public String loanBooks( Model model,@RequestParam(value = "booksToBeLoanedId") int [] booksToBeLoanedId){
 
         if (booksToBeLoanedId.length==0){
             return "redirect:/";
@@ -65,6 +64,27 @@ public class LoaneeController {
         model.addAttribute("loanees",usersLibraryService.getLoaneesByUser(user));
         return "/loanBooks";
     }
+
+
+//    @GetMapping("/loanBooksForm")
+//    public String loanBooks(@ModelAttribute(value = "booksToBeLoaned") int [] booksToBeLoanedId, BindingResult bindingResult, Model model){
+//
+//        if (booksToBeLoanedId.length==0){
+//            return "redirect:/";
+//        }
+//
+//        for(int i : booksToBeLoanedId){
+//            booksToBeLoaned.add(bookService.getBook(i));
+//
+//        }
+//
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        String username = authentication.getName();
+//        User user = userService.getUserByEmail(username);
+//        model.addAttribute("booksToBeLoaned",booksToBeLoaned);
+//        model.addAttribute("loanees",usersLibraryService.getLoaneesByUser(user));
+//        return "/loanBooks";
+//    }
     @PostMapping("/loanBooksToLoanee/{id}")
     public String loanBooksToLoanee(@PathVariable(value = "id") int id, @RequestParam(value = "loan") int [] booksToBeLoanedId){
         for(int i : booksToBeLoanedId){
