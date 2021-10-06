@@ -35,7 +35,7 @@
         </thead>
         <tbody>
         <tr th:each="book:${booksToBeLoaned}">
-            <td><td class="table-success"><a  th:text="${book.name}" th:href="@{/loanBooksToLoanee/{id}(id=${loanee.id})}" method="post"></a></td></td>
+            <td><td class="table-success"><a  th:text="${book.title}" ></a></td></td>
         </tr>
 
         </tbody>
