@@ -3,6 +3,7 @@ package com.example.HomeLibrarySpringBoot.controller;
 import com.example.HomeLibrarySpringBoot.model.Book;
 import com.example.HomeLibrarySpringBoot.model.Loanee;
 import com.example.HomeLibrarySpringBoot.model.User;
+import com.example.HomeLibrarySpringBoot.model.UsersLibrary;
 import com.example.HomeLibrarySpringBoot.service.BookService;
 import com.example.HomeLibrarySpringBoot.service.LoaneeService;
 import com.example.HomeLibrarySpringBoot.service.UserService;
@@ -86,19 +87,20 @@ public class LoaneeController {
 //        return "/loanBooks";
 //    }
     @PostMapping("/loanBooksToLoanee/{id}")
-    public String loanBooksToLoanee(@PathVariable(value = "id") int id, @RequestParam(value = "loan") int [] booksToBeLoanedId){
-        for(int i : booksToBeLoanedId){
-            booksToBeLoaned.add(bookService.getBook(i));
-        }
+    public String loanBooksToLoanee(@PathVariable(value = "id") int id){
+
         loaneeService.loanBook(booksToBeLoaned,id);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         User user = userService.getUserByEmail(username);
+        UsersLibrary usersLibrary = usersLibraryService.getUsersLibraryByUser(user);
         List<Loanee> usersLoanees;
-        usersLoanees = usersLibraryService.getUsersLibraryByUser(user).getLoanees();
-
-
+        usersLoanees = usersLibrary.getLoanees();
         Loanee loanee = loaneeService.getLoanee(id);
+        for (Book book : booksToBeLoaned){
+            usersLibrary.getBooksLoanedToLoanees().put(book,loanee);
+        }
+
         if(!usersLoanees.contains(loanee)){
             usersLoanees.add(loanee);
         }
@@ -106,15 +108,19 @@ public class LoaneeController {
     }
 
     @PostMapping("/saveLoaneeAndLoanBooks")
-    public String saveLoaneeAndLoanBooks(@RequestParam(value = "loan") int [] booksToBeLoanedId, @ModelAttribute("loanee") Loanee loanee){
-        for(int i : booksToBeLoanedId){
-            booksToBeLoaned.add(bookService.getBook(i));
+    public String saveLoaneeAndLoanBooks(@ModelAttribute("loanee") Loanee loanee){
+        if (!loaneeService.getLoanees().contains(loanee)){
+            loaneeService.addLoanee(loanee);
         }
-        loaneeService.addLoanee(loanee);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         User user = userService.getUserByEmail(username);
-        usersLibraryService.getLoaneesByUser(user).add(loanee);
+        UsersLibrary usersLibrary = usersLibraryService.getUsersLibraryByUser(user);
+        usersLibrary.getLoanees().add(loanee);
+        for (Book book : booksToBeLoaned){
+            usersLibrary.getBooksLoanedToLoanees().put(book,loanee);
+        }
+
         loaneeService.loanBook(booksToBeLoaned,loanee.getId());
 
         return "redirect:/";

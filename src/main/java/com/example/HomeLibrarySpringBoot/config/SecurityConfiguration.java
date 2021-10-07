@@ -15,8 +15,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
+import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
 import java.util.Locale;
 
@@ -69,17 +69,17 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter implemen
 
     @Bean
     public LocaleResolver localeResolver() {
-//        SessionLocaleResolver sessionLocaleResolver = new SessionLocaleResolver();
-//        sessionLocaleResolver.setDefaultLocale(Locale.US);
-        CookieLocaleResolver cookieLocaleResolver = new CookieLocaleResolver();
-        cookieLocaleResolver.setDefaultLocale(Locale.US);
-        return cookieLocaleResolver;
+        SessionLocaleResolver sessionLocaleResolver = new SessionLocaleResolver();
+        sessionLocaleResolver.setDefaultLocale(Locale.US);
+//        CookieLocaleResolver cookieLocaleResolver = new CookieLocaleResolver();
+//        cookieLocaleResolver.setDefaultLocale(Locale.US);
+        return sessionLocaleResolver;
     }
 
     @Bean
     public LocaleChangeInterceptor localeChangeInterceptor() {
         LocaleChangeInterceptor localeChangeInterceptor = new LocaleChangeInterceptor();
-        localeChangeInterceptor.setParamName("language");
+        localeChangeInterceptor.setParamName("lan");
         return localeChangeInterceptor;
     }
 
