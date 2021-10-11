@@ -95,7 +95,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter implemen
     public ViewResolver getViewResolver(ISpringTemplateEngine templateEngine) {
         ThymeleafViewResolver viewResolver = new ThymeleafViewResolver();
         viewResolver.setTemplateEngine(templateEngine);
-        viewResolver.setCharacterEncoding("UTF-8");
+        viewResolver.setCharacterEncoding("ISO-8859-3");
         return viewResolver;
     }
 
