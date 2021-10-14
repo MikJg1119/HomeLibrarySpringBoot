@@ -52,7 +52,7 @@ public class LoaneeController {
         if (booksToBeLoanedId.length==0){
             return "redirect:/";
         }
-
+        List<Book> booksToBeLoaned=new ArrayList<Book>();
         for(int i : booksToBeLoanedId){
             booksToBeLoaned.add(bookService.getBook(i));
 
@@ -104,6 +104,8 @@ public class LoaneeController {
         if(!usersLoanees.contains(loanee)){
             usersLoanees.add(loanee);
         }
+        usersLibraryService.save(usersLibrary);
+
         return "redirect:/";
     }
 

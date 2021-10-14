@@ -70,7 +70,6 @@ public class UsersLibrary {
 //                return loanee;
 //            }
 //        }
-        booksLoanedToLoanees.get(book);
         return booksLoanedToLoanees.get(book);
     }
 }

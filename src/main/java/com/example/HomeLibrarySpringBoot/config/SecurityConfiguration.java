@@ -13,13 +13,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.LocaleResolver;
-import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
-import org.thymeleaf.spring5.ISpringTemplateEngine;
-import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 
 import java.util.Locale;
 
@@ -91,12 +88,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter implemen
         registry.addInterceptor(localeChangeInterceptor());
     }
 
-    @Bean
-    public ViewResolver getViewResolver(ISpringTemplateEngine templateEngine) {
-        ThymeleafViewResolver viewResolver = new ThymeleafViewResolver();
-        viewResolver.setTemplateEngine(templateEngine);
-        viewResolver.setCharacterEncoding("ISO-8859-3");
-        return viewResolver;
-    }
+
 
 }
