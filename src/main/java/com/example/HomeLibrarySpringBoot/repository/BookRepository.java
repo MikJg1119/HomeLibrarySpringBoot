@@ -10,6 +10,7 @@ import java.util.Optional;
 
 @Repository
 public interface BookRepository extends JpaRepository<Book, Integer> {
+    @Query("select b from Book b where b.title = ?1")
     Book findByTitle(String title);
     @Query("select b from Book b where b.author = ?1")
     List<Book> findByAuthor(String author);
