@@ -9,6 +9,8 @@ import com.example.HomeLibrarySpringBoot.service.LoaneeService;
 import com.example.HomeLibrarySpringBoot.service.UserService;
 import com.example.HomeLibrarySpringBoot.service.UsersLibraryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.lang.Nullable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
@@ -22,21 +24,12 @@ import java.util.stream.Collectors;
 @RestController
 public class LoaneeController {
 
-//    @Autowired
     private LoaneeService loaneeService;
-
-//    @Autowired
     private BookService bookService;
-
-//    @Autowired
     private UserService userService;
-
-//    @Autowired
     private UsersLibraryService usersLibraryService;
 
 
-
-    public List<Book> booksToBeLoaned=new ArrayList<Book>();
 
     @Autowired
     public LoaneeController(LoaneeService loaneeService, BookService bookService, UserService userService, UsersLibraryService usersLibraryService) {
@@ -45,57 +38,37 @@ public class LoaneeController {
         this.userService = userService;
         this.usersLibraryService = usersLibraryService;
     }
-    @PostMapping("/loanBooksForm")
-    public String loanBooks( Model model,@RequestParam(value = "booksToBeLoanedId") int [] booksToBeLoanedId){
 
-        if (booksToBeLoanedId.length==0){
-            return "redirect:/";
-        }
-        List<Book> booksToBeLoaned=new ArrayList<Book>();
-        for(int i : booksToBeLoanedId){
-            booksToBeLoaned.add(bookService.getBook(i));
-
-        }
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        User user = userService.getUserByEmail(username);
-        model.addAttribute("booksToBeLoaned",booksToBeLoaned);
-        model.addAttribute("loanees",usersLibraryService.getLoaneesByUser(user));
-        return "/loanBooks";
-    }
-
-
-//    @GetMapping("/loanBooksForm")
-//    public String loanBooks(@ModelAttribute(value = "booksToBeLoaned") int [] booksToBeLoanedId, BindingResult bindingResult, Model model){
+//    @PostMapping("/loanBooksForm")
+//    public HttpStatus loanBooks(@RequestParam @Nullable String email,
+//                                @RequestParam @Nullable int userId,
+//                                @RequestBody int [] booksToBeLoanedId){
 //
 //        if (booksToBeLoanedId.length==0){
-//            return "redirect:/";
+//            return HttpStatus.NO_CONTENT;
 //        }
-//
+//        List<Book> booksToBeLoaned=new ArrayList<Book>();
 //        for(int i : booksToBeLoanedId){
 //            booksToBeLoaned.add(bookService.getBook(i));
 //
 //        }
-//
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        String username = authentication.getName();
-//        User user = userService.getUserByEmail(username);
-//        model.addAttribute("booksToBeLoaned",booksToBeLoaned);
-//        model.addAttribute("loanees",usersLibraryService.getLoaneesByUser(user));
+//        User user = email !=null ? userService.getUserByEmail(email) : userService.getUserById(userId);
 //        return "/loanBooks";
 //    }
-    @PostMapping("/loanBooksToLoanee/{id}")
-    public String loanBooksToLoanee(@PathVariable(value = "id") int id){
-
-        loaneeService.loanBook(booksToBeLoaned,id);
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        User user = userService.getUserByEmail(username);
+    @PostMapping("/loanBooksToLoanee/{loaneeId}")
+    public HttpStatus loanBooksToLoanee(@PathVariable(value = "loaneeId") int loaneeId,
+                                        @RequestParam @Nullable String email,
+                                        @RequestParam @Nullable int userId,
+                                        @RequestBody int [] booksToBeLoanedId){
+        List<Book> booksToBeLoaned = new ArrayList<>();
+        for (int id : booksToBeLoanedId){
+            booksToBeLoaned.add(bookService.getBook(id));
+        }
+        loaneeService.loanBook(booksToBeLoaned,loaneeId);
+        User user = email !=null ? userService.getUserByEmail(email) : userService.getUserById(userId);
         UsersLibrary usersLibrary = usersLibraryService.getUsersLibraryByUser(user);
-        List<Loanee> usersLoanees;
-        usersLoanees = usersLibrary.getLoanees();
-        Loanee loanee = loaneeService.getLoanee(id);
+        List<Loanee> usersLoanees = usersLibrary.getLoanees();
+        Loanee loanee = loaneeService.getLoanee(loaneeId);
         for (Book book : booksToBeLoaned){
             usersLibrary.getBooksLoanedToLoanees().put(book,loanee);
         }
@@ -105,61 +78,62 @@ public class LoaneeController {
         }
         usersLibraryService.save(usersLibrary);
 
-        return "redirect:/";
+        return HttpStatus.OK;
     }
 
     @PostMapping("/saveLoaneeAndLoanBooks")
-    public String saveLoaneeAndLoanBooks(@ModelAttribute("loanee") Loanee loanee){
+    public HttpStatus saveLoaneeAndLoanBooks(@RequestBody Loanee loanee,
+                                        @RequestParam @Nullable String email,
+                                         @RequestParam @Nullable int userId,
+                                         @RequestBody int [] booksToBeLoanedId){
+
         if (!loaneeService.getLoanees().contains(loanee)){
             loaneeService.addLoanee(loanee);
         }
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        User user = userService.getUserByEmail(username);
+
+        List<Book> booksToBeLoaned = new ArrayList<>();
+        for (int id : booksToBeLoanedId){
+            booksToBeLoaned.add(bookService.getBook(id));
+        }
+
+        User user = email !=null ? userService.getUserByEmail(email) : userService.getUserById(userId);
         UsersLibrary usersLibrary = usersLibraryService.getUsersLibraryByUser(user);
         usersLibrary.getLoanees().add(loanee);
+
         for (Book book : booksToBeLoaned){
             usersLibrary.getBooksLoanedToLoanees().put(book,loanee);
         }
-
         loaneeService.loanBook(booksToBeLoaned,loanee.getId());
 
-        return "redirect:/";
+        return HttpStatus.OK;
     }
 
     @PostMapping("/loanedBooksListByLoanee/{id}")
-    public String listOfBooksLoanedByLoanee(@PathVariable(value = "id") int id, Model model){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        User user = userService.getUserByEmail(username);
+    public List<Book> listOfBooksLoanedByLoanee(@PathVariable(value = "id") int id,
+                                                @RequestParam @Nullable String email,
+                                                @RequestParam @Nullable int userId){
+        User user = email !=null ? userService.getUserByEmail(email) : userService.getUserById(userId);
         List<Book> usersBooks= usersLibraryService.getBooksByUser(user);
-        List<Book> loanedBooksByLoanee = (loaneeService.getLoanee(id).getLoanedBooks().stream().filter(e ->usersBooks.contains(e)).collect(Collectors.toList()));
-        model.addAttribute("loanee", loaneeService.getLoanee(id).getName());
-        model.addAttribute("loanedBooks", loanedBooksByLoanee);
-        return "/books";
+        return  loaneeService.getLoanee(id).getLoanedBooks().stream().filter(e ->usersBooks.contains(e)).collect(Collectors.toList());
     }
 
     @PostMapping("/returnBook/{id}")
-    public String returnBookToLibrary(@PathVariable(value = "id") int bookId, Model model){
+    public HttpStatus returnBookToLibrary(@PathVariable(value = "id") int bookId,
+                                      @RequestParam @Nullable String email,
+                                      @RequestParam @Nullable int userId){
         Book book = bookService.getBook(bookId);
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        User user = userService.getUserByEmail(username);
-
+        User user = email !=null ? userService.getUserByEmail(email) : userService.getUserById(userId);
         Loanee loanee = usersLibraryService.getUsersLibraryByUser(user).checkIfBookIsLoaned(book);
         loanee.returnLoanedBook(book);
-        model.addAttribute("loanee", loanee.getName());
-        model.addAttribute("loanedBooks", loanee.getLoanedBooks());
-        return "/books";
+
+        return HttpStatus.ACCEPTED;
     }
 
     @GetMapping ("/loanees")
-    public String getLoaneesList(Model model){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        User user = userService.getUserByEmail(username);
-        model.addAttribute("loanees",usersLibraryService.getUsersLibraryByUser(user).getLoanees());
-        return "/loanees_list";
+    public List<Loanee> getLoaneesList(@RequestParam @Nullable String email,
+                                       @RequestParam @Nullable int userId){
+        User user = email !=null ? userService.getUserByEmail(email) : userService.getUserById(userId);
+        return usersLibraryService.getUsersLibraryByUser(user).getLoanees();
     }
 
 }
