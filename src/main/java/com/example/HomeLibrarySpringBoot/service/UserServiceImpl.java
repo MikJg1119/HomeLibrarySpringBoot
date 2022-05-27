@@ -72,6 +72,12 @@ public class UserServiceImpl implements UserService{
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email);
     }
+
+    @Override
+    public User getUserById(int id) {
+        return userRepository.getById(id);
+    }
+
     //    @Override
 //    public void addBookToUser(User user, Book book) {
 //       try {

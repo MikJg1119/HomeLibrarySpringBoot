@@ -10,4 +10,5 @@ public interface UserService extends UserDetailsService {
 //    void addBookToUser(User user, Book book);
     User getUserByEmail(String email);
 
+    User getUserById(int id);
 }

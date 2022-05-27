@@ -7,12 +7,13 @@ import com.example.HomeLibrarySpringBoot.service.BookService;
 import com.example.HomeLibrarySpringBoot.service.UserService;
 import com.example.HomeLibrarySpringBoot.service.UsersLibraryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.lang.Nullable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @CrossOrigin(origins = "http://localhost:3000")
@@ -28,7 +29,6 @@ public class BookController {
 //    @Autowired
     private UsersLibraryService usersLibraryService;
 
-    private List<Book> booksToBeLoaned=new ArrayList<Book>();
 
     @Autowired
     public BookController(BookService bookService, UserService userService, UsersLibraryService usersLibraryService) {
@@ -37,20 +37,18 @@ public class BookController {
         this.usersLibraryService = usersLibraryService;
     }
 
-    @GetMapping("/")
-    public String booksList(Model model){
-        booksToBeLoaned=new ArrayList<Book>();
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        User user = userService.getUserByEmail(username);
+    @GetMapping("/booksList")
+    @ResponseBody
+    public List<Book> booksList(@RequestParam @Nullable String email,
+                                @RequestParam @Nullable int userId){
+        User user = email !=null ? userService.getUserByEmail(email) : userService.getUserById(userId);
         List<Book> books;
         UsersLibrary usersLibrary = usersLibraryService.getUsersLibraryByUser(user);
         books=usersLibrary.getBooks();
-        model.addAttribute("books", books);
-        model.addAttribute("usersLibrary", usersLibrary);
-        model.addAttribute("booksToBeLoaned", booksToBeLoaned);
-        return "index";
+
+        return books;
     }
+
 
     @GetMapping("/addBook")
     public String addBook(Model model){
@@ -60,42 +58,46 @@ public class BookController {
     }
 
     @PostMapping("/saveBook")
-    public String saveBook(@ModelAttribute("isbn") String isbn){
+    public HttpStatus saveBook(@RequestParam String isbn,
+                                @RequestParam @Nullable String email,
+                               @RequestParam @Nullable int userId){
         Book book = bookService.getBookByIsbn(isbn);
         if (book.getTitle().equals("")){
 
-            return "redirect:/showFormForUpdate/"+book.getId();
+            return HttpStatus.NOT_FOUND;
         }
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        User user = userService.getUserByEmail(username);
+        User user = userService.getUserByEmail(email);
+        if (email == null){
+            user = userService.getUserById(userId);
+        }
         UsersLibrary usersLibrary = usersLibraryService.getUsersLibraryByUser(user);
        usersLibrary.getBooks().add(book);
         usersLibraryService.save(usersLibrary);
-        return "redirect:/";
+        return HttpStatus.OK;
     }
 
     @PostMapping("/updateBook")
-    public String updateBook(@ModelAttribute("book") Book book){
+    public HttpStatus updateBook(@RequestBody Book book){
         bookService.updateBook(book);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         User user = userService.getUserByEmail(username);
         UsersLibrary usersLibrary = usersLibraryService.getUsersLibraryByUser(user);
         usersLibrary.getBooks().add(book.getId(),book);
-        return "redirect:/";
+        return HttpStatus.ACCEPTED;
     }
 
-    @GetMapping("/showFormForUpdate/{id}")
-    public String showFormForUpdate(@PathVariable(value = "id") int id, Model model){
-        Book book = bookService.getBook(id);
-        model.addAttribute("book", book);
-        return "update_book";
+//    @GetMapping("/showFormForUpdate/{id}")
+//    public HttpStatus showFormForUpdate(@PathVariable(value = "id") int id, Model model){
+//        Book book = bookService.getBook(id);
+//        model.addAttribute("book", book);
+//        return HttpStatus.ACCEPTED;
+//
+//    }
 
-    }
-
-    @GetMapping("/deleteBook/{id}")
-    public String deleteBook(@PathVariable(value = "id") int id){
+    @DeleteMapping("/deleteBook/{id}")
+    public HttpStatus deleteBook(@PathVariable(value = "id") int id,
+                                    @RequestParam int userId){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         User user = userService.getUserByEmail(username);
@@ -104,7 +106,7 @@ public class BookController {
         usersLibraryService.save(usersLibrary);
 
 
-        return "redirect:/";
+        return HttpStatus.ACCEPTED;
     }
 
 
