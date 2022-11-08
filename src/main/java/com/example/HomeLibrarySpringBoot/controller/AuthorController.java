@@ -39,13 +39,6 @@ public class AuthorController {
         return authorService.getAuthorsByUser(user);
     }
 
-//    @GetMapping("/showFormForAuthorUpdate/{id}")
-//    public String showFormForAuthorUpdate(@PathVariable(value = "id") int id, Model model){
-//        Author author = authorService.getAuthor(id);
-//        model.addAttribute("author", author);
-//        return "update_author";
-//
-//    }
 
     @GetMapping("/showAuthorsBooks/{authorId}")
     public List<Book> showBooksByAuthor(@PathVariable(value = "authorId") int id,
