@@ -43,16 +43,8 @@ public class User implements Serializable {
 
 
 
-     // = new ArrayList<Loanee>();
 
     public User() {
-//        if (this.books==null){
-//            this.books=new ArrayList<Book>();
-//
-//        }
-//        if (this.loanees==null){
-//            this.loanees=new ArrayList<Loanee>();
-//        }
     }
     @Autowired
     public User(String name, String email, String password, Collection<Role> roles) {
@@ -60,8 +52,6 @@ public class User implements Serializable {
         this.email = email;
         this.password = password;
         this.roles = roles;
-//        this.books = new ArrayList<Book>();
-//        this.loanees = new ArrayList<Loanee>();
     }
 
 
