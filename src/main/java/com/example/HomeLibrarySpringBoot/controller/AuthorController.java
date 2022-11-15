@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "*")
 @RestController
 public class AuthorController {
 
@@ -54,7 +54,7 @@ public class AuthorController {
     }
 
     @PostMapping("/updateAuthor")
-    public String updateAuthor(@ModelAttribute Author author){
+    public String updateAuthor(@RequestBody Author author){
         authorService.updateAuthor(author);
         return "redirect:/authors";
     }
