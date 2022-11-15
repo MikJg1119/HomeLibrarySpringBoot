@@ -9,6 +9,7 @@ import com.example.HomeLibrarySpringBoot.service.BookService;
 import com.example.HomeLibrarySpringBoot.service.UserService;
 import com.example.HomeLibrarySpringBoot.service.UsersLibraryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,14 +35,14 @@ public class AuthorController {
     @GetMapping("/authors")
     @ResponseBody
     public List<Author> authorsList(@RequestParam @Nullable String email,
-                                    @RequestParam @Nullable int userId){
+                                    @RequestParam @Nullable Integer userId){
         User user = email !=null ? userService.getUserByEmail(email) : userService.getUserById(userId);
         return authorService.getAuthorsByUser(user);
     }
 
 
     @GetMapping("/showAuthorsBooks/{authorId}")
-    public List<Book> showBooksByAuthor(@PathVariable(value = "authorId") int id,
+    public List<Book> showBooksByAuthor(@PathVariable(value = "authorId") Integer id,
                                     @RequestParam @Nullable String email,
                                     @RequestParam @Nullable int userId){
         User user = email !=null ? userService.getUserByEmail(email) : userService.getUserById(userId);
@@ -54,20 +55,10 @@ public class AuthorController {
     }
 
     @PostMapping("/updateAuthor")
-    public String updateAuthor(@RequestBody Author author){
+    public HttpStatus updateAuthor(@RequestBody Author author){
         authorService.updateAuthor(author);
-        return "redirect:/authors";
+        return HttpStatus.ACCEPTED;
     }
 
-//    @GetMapping("/deleteAuthor/{id}") //this method is pretty useless for endusers - it'd need to delete all books by said author
-//    public String deleteBook(@PathVariable(value = "id") int id){
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        String username = authentication.getName();
-//        User user = userService.getUserByEmail(username);
-//        UsersLibrary usersLibrary = usersLibraryService.getUsersLibraryByUser(user);
-//
-//        authorService.removeAuthor(id);
-//        return "redirect:/authors";
-//    }
 
 }

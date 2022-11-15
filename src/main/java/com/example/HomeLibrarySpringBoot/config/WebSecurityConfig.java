@@ -54,14 +54,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.cors()
-//                .configurationSource(request -> {
-//                    CorsConfiguration cors = new CorsConfiguration();
-//                    cors.setAllowedOrigins(
-//                            Arrays.asList("*"));
-//                    cors.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-//                    cors.setAllowedHeaders(Arrays.asList("*"));
-//                    return cors;
-//                })
                 .and()
                 .authorizeRequests()
                 .antMatchers("/authenticate", "/registration")
@@ -69,18 +61,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
                 httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
-//        httpSecurity.csrf().disable()
-//                // dont authenticate this particular request
-//                .authorizeRequests().antMatchers("/authenticate", "/registration").permitAll().
-//                // all other requests need to be authenticated
-//                        anyRequest().authenticated().and().
-//                // make sure we use stateless session; session won't be used to
-//                // store user's state.
-//                        exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and().sessionManagement()
-//                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-//
-//        // Add a filter to validate the tokens with every request
-//        httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     @Bean
@@ -92,22 +72,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         config.addAllowedMethod("*");
         source.registerCorsConfiguration("/**", config);
         CorsFilter bean = new CorsFilter(source);
-//        FilterRegistrationBean bean = new FilterRegistrationBean(new CorsFilter(source));
-//        bean.setOrder(0);
         return bean;
     }
 
-//    private CorsConfigurationSource corsConfigurationSource(String corsOrigin) {
-//        CorsConfiguration configuration = new CorsConfiguration();
-//        configuration.setAllowedOrigins(Arrays.asList(corsOrigin));
-//        configuration.setAllowedMethods(Arrays.asList("GET","POST","HEAD","OPTIONS","PUT","PATCH","DELETE"));
-//        configuration.setMaxAge(10L);
-//        configuration.setAllowCredentials(true);
-//        configuration.setAllowedHeaders(Arrays.asList("Accept","Access-Control-Request-Method","Access-Control-Request-Headers",
-//                "Accept-Language","Authorization","Content-Type","Request-Name","Request-Surname","Origin","X-Request-AppVersion",
-//                "X-Request-OsVersion", "X-Request-Device", "X-Requested-With"));
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        source.registerCorsConfiguration("/**", configuration);
-//        return source;
-//    }
 }
