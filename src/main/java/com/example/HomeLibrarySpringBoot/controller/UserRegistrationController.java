@@ -1,6 +1,6 @@
 package com.example.HomeLibrarySpringBoot.controller;
 
-import com.example.HomeLibrarySpringBoot.controller.dto.UserRegistrationDto;
+import com.example.HomeLibrarySpringBoot.model.dto.UserRegistrationDto;
 import com.example.HomeLibrarySpringBoot.model.User;
 import com.example.HomeLibrarySpringBoot.service.UserService;
 import com.example.HomeLibrarySpringBoot.service.UsersLibraryService;

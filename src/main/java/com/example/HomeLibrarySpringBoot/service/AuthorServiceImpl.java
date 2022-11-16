@@ -3,6 +3,7 @@ package com.example.HomeLibrarySpringBoot.service;
 import com.example.HomeLibrarySpringBoot.model.Author;
 import com.example.HomeLibrarySpringBoot.model.Book;
 import com.example.HomeLibrarySpringBoot.model.User;
+import com.example.HomeLibrarySpringBoot.model.dto.AuthorDto;
 import com.example.HomeLibrarySpringBoot.repository.AuthorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -84,5 +85,11 @@ public class AuthorServiceImpl implements AuthorService{
             }
         }
         return authors;
+    }
+
+    @Override
+    public Author getAuthorFromDto(AuthorDto authorDto) {
+        //TODO
+        return null;
     }
 }

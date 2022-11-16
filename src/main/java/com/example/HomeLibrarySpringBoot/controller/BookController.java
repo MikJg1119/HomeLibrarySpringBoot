@@ -4,13 +4,14 @@ import com.example.HomeLibrarySpringBoot.config.JwtTokenUtil;
 import com.example.HomeLibrarySpringBoot.model.Book;
 import com.example.HomeLibrarySpringBoot.model.User;
 import com.example.HomeLibrarySpringBoot.model.UsersLibrary;
+import com.example.HomeLibrarySpringBoot.model.dto.BookDto;
 import com.example.HomeLibrarySpringBoot.service.BookService;
 import com.example.HomeLibrarySpringBoot.service.UserService;
 import com.example.HomeLibrarySpringBoot.service.UsersLibraryService;
-import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -43,58 +44,32 @@ public class BookController {
 
     @GetMapping(value = "/booksList", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<Book> booksList(HttpServletRequest request){
-        final String requestTokenHeader = request.getHeader("Authorization");
-
-        String username = null;
-        String jwtToken = null;
-
-        if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
-            jwtToken = requestTokenHeader.substring(7);
-            try {
-                username = jwtTokenUtil.getUsernameFromToken(jwtToken);
-            } catch (IllegalArgumentException e) {
-                System.out.println("Unable to get JWT Token");
-            } catch (ExpiredJwtException e) {
-                System.out.println("JWT Token has expired");
-            }
-        } else {
-            System.out.println("JWT Token does not begin with Bearer String");
-        }
+    public List<BookDto> booksList(HttpServletRequest request){
+        String username = jwtTokenUtil.returnUserFromRequest(request);
         User user = userService.getUserByEmail(username);
         List<Book> books;
         UsersLibrary usersLibrary = usersLibraryService.getUsersLibraryByUser(user);
         books=usersLibrary.getBooks();
 
-        return books;
+        return bookService.getAllBooksDto(books);
     }
 
 
     @PostMapping(value = "/saveBook", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public HttpStatus saveBook(@RequestHeader String isbn,
-                               HttpServletRequest request){
-        Book book = bookService.getBookByIsbn(isbn);
+    public HttpStatus saveBook(@RequestHeader @Nullable String isbn,
+                               HttpServletRequest request,
+                               @RequestBody @Nullable BookDto bookDto){
+        Book book = null;
+        if (bookDto !=null){
+            book = bookService.toBook(bookDto);
+        }else {
+            book = bookService.getBookByIsbn(isbn);
+        }
         if (book.getTitle().equals("")){
 
             return HttpStatus.NOT_FOUND;
         }
-        final String requestTokenHeader = request.getHeader("Authorization");
-
-        String username = null;
-        String jwtToken = null;
-
-        if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
-            jwtToken = requestTokenHeader.substring(7);
-            try {
-                username = jwtTokenUtil.getUsernameFromToken(jwtToken);
-            } catch (IllegalArgumentException e) {
-                System.out.println("Unable to get JWT Token");
-            } catch (ExpiredJwtException e) {
-                System.out.println("JWT Token has expired");
-            }
-        } else {
-            System.out.println("JWT Token does not begin with Bearer String");
-        }
+        String username = jwtTokenUtil.returnUserFromRequest(request);
         User user = userService.getUserByEmail(username);
         UsersLibrary usersLibrary = usersLibraryService.getUsersLibraryByUser(user);
        usersLibrary.getBooks().add(book);
@@ -103,26 +78,11 @@ public class BookController {
     }
 
     @PostMapping("/updateBook")
-    public HttpStatus updateBook(@RequestBody Book book,
+    public HttpStatus updateBook(@RequestBody BookDto bookDto,
                                  HttpServletRequest request){
+        Book book = bookService.toBook(bookDto);
         bookService.updateBook(book);
-        final String requestTokenHeader = request.getHeader("Authorization");
-
-        String username = null;
-        String jwtToken = null;
-
-        if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
-            jwtToken = requestTokenHeader.substring(7);
-            try {
-                username = jwtTokenUtil.getUsernameFromToken(jwtToken);
-            } catch (IllegalArgumentException e) {
-                System.out.println("Unable to get JWT Token");
-            } catch (ExpiredJwtException e) {
-                System.out.println("JWT Token has expired");
-            }
-        } else {
-            System.out.println("JWT Token does not begin with Bearer String");
-        }
+        String username = jwtTokenUtil.returnUserFromRequest(request);
         User user = userService.getUserByEmail(username);
         UsersLibrary usersLibrary = usersLibraryService.getUsersLibraryByUser(user);
         usersLibrary.getBooks().add(book.getId(),book);
@@ -133,23 +93,7 @@ public class BookController {
     @DeleteMapping("/deleteBook/{id}")
     public HttpStatus deleteBook(@PathVariable(value = "id") int id,
                                  HttpServletRequest request){
-        final String requestTokenHeader = request.getHeader("Authorization");
-
-        String username = null;
-        String jwtToken = null;
-
-        if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
-            jwtToken = requestTokenHeader.substring(7);
-            try {
-                username = jwtTokenUtil.getUsernameFromToken(jwtToken);
-            } catch (IllegalArgumentException e) {
-                System.out.println("Unable to get JWT Token");
-            } catch (ExpiredJwtException e) {
-                System.out.println("JWT Token has expired");
-            }
-        } else {
-            System.out.println("JWT Token does not begin with Bearer String");
-        }
+        String username = jwtTokenUtil.returnUserFromRequest(request);
         User user = userService.getUserByEmail(username);
         UsersLibrary usersLibrary = usersLibraryService.getUsersLibraryByUser(user);
         usersLibrary.getBooks().remove(bookService.getBook(id));

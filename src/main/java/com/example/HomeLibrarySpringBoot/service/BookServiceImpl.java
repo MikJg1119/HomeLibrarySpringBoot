@@ -2,6 +2,7 @@ package com.example.HomeLibrarySpringBoot.service;
 
 import com.example.HomeLibrarySpringBoot.model.Author;
 import com.example.HomeLibrarySpringBoot.model.Book;
+import com.example.HomeLibrarySpringBoot.model.dto.BookDto;
 import com.example.HomeLibrarySpringBoot.repository.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -88,7 +89,7 @@ public class BookServiceImpl implements BookService{
         Optional<Book> optional = bookRepository.findByIsbn(isbn);
         Book book = null;
         if (optional.isPresent()){
-            return book = optional.get();
+            return  optional.get();
         }else {
             book = new Book();
             book.scrapeBookByIsbn(isbn);
@@ -108,5 +109,23 @@ public class BookServiceImpl implements BookService{
         authorService.addAuthor(bookAuthor);
         }
         return book;
+    }
+
+    @Override
+    public Book toBook(BookDto bookDto) {
+        //TODO
+        return null;
+    }
+
+    @Override
+    public BookDto toBookDto(Book book) {
+        //TODO
+        return null;
+    }
+
+    @Override
+    public List<BookDto> getAllBooksDto(List<Book> books) {
+        //TODO
+        return null;
     }
 }

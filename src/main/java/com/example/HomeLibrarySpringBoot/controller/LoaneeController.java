@@ -74,23 +74,7 @@ public class LoaneeController {
             booksToBeLoaned.add(bookService.getBook(id));
         }
         loaneeService.loanBook(booksToBeLoaned,loaneeId);
-        final String requestTokenHeader = request.getHeader("Authorization");
-
-        String username = null;
-        String jwtToken = null;
-
-        if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
-            jwtToken = requestTokenHeader.substring(7);
-            try {
-                username = jwtTokenUtil.getUsernameFromToken(jwtToken);
-            } catch (IllegalArgumentException e) {
-                System.out.println("Unable to get JWT Token");
-            } catch (ExpiredJwtException e) {
-                System.out.println("JWT Token has expired");
-            }
-        } else {
-            System.out.println("JWT Token does not begin with Bearer String");
-        }
+        String username = jwtTokenUtil.returnUserFromRequest(request);
         User user = userService.getUserByEmail(username);
         UsersLibrary usersLibrary = usersLibraryService.getUsersLibraryByUser(user);
         List<Loanee> usersLoanees = usersLibrary.getLoanees();
@@ -121,23 +105,7 @@ public class LoaneeController {
             booksToBeLoaned.add(bookService.getBook(id));
         }
 
-        final String requestTokenHeader = request.getHeader("Authorization");
-
-        String username = null;
-        String jwtToken = null;
-
-        if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
-            jwtToken = requestTokenHeader.substring(7);
-            try {
-                username = jwtTokenUtil.getUsernameFromToken(jwtToken);
-            } catch (IllegalArgumentException e) {
-                System.out.println("Unable to get JWT Token");
-            } catch (ExpiredJwtException e) {
-                System.out.println("JWT Token has expired");
-            }
-        } else {
-            System.out.println("JWT Token does not begin with Bearer String");
-        }
+        String username = jwtTokenUtil.returnUserFromRequest(request);
         User user = userService.getUserByEmail(username);
         UsersLibrary usersLibrary = usersLibraryService.getUsersLibraryByUser(user);
         usersLibrary.getLoanees().add(loanee);
@@ -153,23 +121,7 @@ public class LoaneeController {
     @PostMapping("/loanedBooksListByLoanee/{id}")
     public List<Book> listOfBooksLoanedByLoanee(@PathVariable(value = "id") Integer id,
                                                 HttpServletRequest request){
-        final String requestTokenHeader = request.getHeader("Authorization");
-
-        String username = null;
-        String jwtToken = null;
-
-        if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
-            jwtToken = requestTokenHeader.substring(7);
-            try {
-                username = jwtTokenUtil.getUsernameFromToken(jwtToken);
-            } catch (IllegalArgumentException e) {
-                System.out.println("Unable to get JWT Token");
-            } catch (ExpiredJwtException e) {
-                System.out.println("JWT Token has expired");
-            }
-        } else {
-            System.out.println("JWT Token does not begin with Bearer String");
-        }
+        String username = jwtTokenUtil.returnUserFromRequest(request);
         User user = userService.getUserByEmail(username);
         List<Book> usersBooks= usersLibraryService.getBooksByUser(user);
         return  loaneeService.getLoanee(id).getLoanedBooks().stream().filter(e ->usersBooks.contains(e)).collect(Collectors.toList());
@@ -179,23 +131,7 @@ public class LoaneeController {
     public HttpStatus returnBookToLibrary(@PathVariable(value = "id") Integer bookId,
                                           HttpServletRequest request){
         Book book = bookService.getBook(bookId);
-        final String requestTokenHeader = request.getHeader("Authorization");
-
-        String username = null;
-        String jwtToken = null;
-
-        if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
-            jwtToken = requestTokenHeader.substring(7);
-            try {
-                username = jwtTokenUtil.getUsernameFromToken(jwtToken);
-            } catch (IllegalArgumentException e) {
-                System.out.println("Unable to get JWT Token");
-            } catch (ExpiredJwtException e) {
-                System.out.println("JWT Token has expired");
-            }
-        } else {
-            System.out.println("JWT Token does not begin with Bearer String");
-        }
+        String username = jwtTokenUtil.returnUserFromRequest(request);
         User user = userService.getUserByEmail(username);
         Loanee loanee = usersLibraryService.getUsersLibraryByUser(user).checkIfBookIsLoaned(book);
         loanee.returnLoanedBook(book);
@@ -205,23 +141,7 @@ public class LoaneeController {
 
     @GetMapping ("/loanees")
     public List<Loanee> getLoaneesList(HttpServletRequest request){
-        final String requestTokenHeader = request.getHeader("Authorization");
-
-        String username = null;
-        String jwtToken = null;
-
-        if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
-            jwtToken = requestTokenHeader.substring(7);
-            try {
-                username = jwtTokenUtil.getUsernameFromToken(jwtToken);
-            } catch (IllegalArgumentException e) {
-                System.out.println("Unable to get JWT Token");
-            } catch (ExpiredJwtException e) {
-                System.out.println("JWT Token has expired");
-            }
-        } else {
-            System.out.println("JWT Token does not begin with Bearer String");
-        }
+        String username = jwtTokenUtil.returnUserFromRequest(request);
         User user = userService.getUserByEmail(username);
         return usersLibraryService.getUsersLibraryByUser(user).getLoanees();
     }
