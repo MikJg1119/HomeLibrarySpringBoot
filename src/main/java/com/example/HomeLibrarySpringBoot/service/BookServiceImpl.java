@@ -7,6 +7,7 @@ import com.example.HomeLibrarySpringBoot.repository.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -113,19 +114,41 @@ public class BookServiceImpl implements BookService{
 
     @Override
     public Book toBook(BookDto bookDto) {
-        //TODO
-        return null;
+        Book book = new Book();
+        book.setTitle(bookDto.getTitle());
+        book.setAuthor(bookDto.getAuthor());
+        book.setIsbn(bookDto.getIsbn());
+        book.setPublisher(bookDto.getPublisher());
+        book.setPublishedYear(bookDto.getPublishedYear());
+        book.setLanguage(bookDto.getLanguage());
+        book.setId(bookDto.getId());
+        book.setSaga(bookDto.getSaga());
+        book.setPublishingSeries(bookDto.getPublishingSeries());
+        return book;
     }
 
     @Override
     public BookDto toBookDto(Book book) {
-        //TODO
-        return null;
+        BookDto bookDto = new BookDto();
+        bookDto.setTitle(book.getTitle());
+        bookDto.setAuthor(book.getAuthor());
+        bookDto.setIsbn(book.getIsbn());
+        bookDto.setPublisher(book.getPublisher());
+        bookDto.setPublishedYear(book.getPublishedYear());
+        bookDto.setLanguage(book.getLanguage());
+        bookDto.setId(book.getId());
+        bookDto.setSaga(book.getSaga());
+        bookDto.setPublishingSeries(book.getPublishingSeries());
+        return bookDto;
     }
 
     @Override
     public List<BookDto> getAllBooksDto(List<Book> books) {
-        //TODO
-        return null;
+        List<BookDto> listBookDto = new ArrayList<BookDto>();
+        for (Book book : books){
+            listBookDto.add(toBookDto(book));
+    }
+
+        return listBookDto;
     }
 }
