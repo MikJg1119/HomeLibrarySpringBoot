@@ -33,7 +33,7 @@ public class Book  {
     @Column(name = "_isbn")
     private String isbn;
     @Transient
-    private static StringBuilder urlBuild = new StringBuilder("https://data.bn.org.pl/api/bibs.json?isbnIssn=");
+    private static StringBuilder urlBuild = new StringBuilder("https://data.bn.org.pl/api/institutions/bibs.json?isbnIssn=");
     @Column(name = "publisher")
     private String publisher;
     @Column(name = "publishedyear")
@@ -68,7 +68,8 @@ public class Book  {
 
 
     public Book scrapeBookByIsbn(String isbn) {
-        this.isbn =isbn;
+        String finalIsbn = isbn.replace("-","");
+        this.isbn =finalIsbn;
         urlBuild.append(isbn);
         try {
             URL url = new URL(urlBuild.toString());
