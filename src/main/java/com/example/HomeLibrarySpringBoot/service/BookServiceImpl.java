@@ -50,14 +50,15 @@ public class BookServiceImpl implements BookService{
         Optional<Book> optional = bookRepository.findById(book.getId());
         if (optional.isPresent()){
             Book dBEntity = optional.get();
-            dBEntity.setId(book.getId());
-            dBEntity.setAuthor(book.getAuthor());
-            dBEntity.setIsbn(book.getIsbn());
-            dBEntity.setPublisher(book.getPublisher());
-            dBEntity.setPublishedYear(book.getPublishedYear());
-            dBEntity.setLanguage(book.getLanguage());
-            dBEntity.setSaga(book.getSaga());
-            dBEntity.setPublishingSeries(book.getPublishingSeries());
+            Optional.ofNullable(book.getId()).ifPresent(dBEntity::setId);
+            Optional.ofNullable(book.getAuthor()).ifPresent(dBEntity::setAuthor);
+            Optional.ofNullable(book.getIsbn()).ifPresent(dBEntity::setIsbn);
+            Optional.ofNullable(book.getPublisher()).ifPresent(dBEntity::setPublisher);
+            Optional.ofNullable(book.getPublishedYear()).ifPresent(dBEntity::setPublishedYear);
+            Optional.ofNullable(book.getLanguage()).ifPresent(dBEntity::setLanguage);
+            Optional.ofNullable(book.getSaga()).ifPresent(dBEntity::setSaga);
+            Optional.ofNullable(book.getPublishingSeries()).ifPresent(dBEntity::setPublishingSeries);
+            Optional.ofNullable(book.getCover()).ifPresent(dBEntity::setCover);
             bookRepository.save(dBEntity);
         }else {
             bookRepository.save(book);

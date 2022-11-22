@@ -13,9 +13,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
+
 @CrossOrigin(origins = "*")
 @RestController
 public class BookController {
@@ -42,16 +46,16 @@ public class BookController {
         this.usersLibraryService = usersLibraryService;
     }
 
-    @GetMapping(value = "/booksList", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/booksList")
     @ResponseBody
-    public List<BookDto> booksList(HttpServletRequest request){
+    public List<Book> booksList(HttpServletRequest request){
         String username = jwtTokenUtil.returnUserFromRequest(request);
         User user = userService.getUserByEmail(username);
         List<Book> books;
         UsersLibrary usersLibrary = usersLibraryService.getUsersLibraryByUser(user);
         books=usersLibrary.getBooks();
-
-        return bookService.getAllBooksDto(books);
+        return books;
+//        return bookService.getAllBooksDto(books);
     }
 
 
@@ -65,9 +69,9 @@ public class BookController {
         }else {
             book = bookService.getBookByIsbn(isbn);
         }
-        if (book.getTitle().equals("")){
-
-            return HttpStatus.NOT_FOUND;
+        if (!Optional.ofNullable(book.getTitle()).isPresent()){
+            book = new Book();
+            book.setIsbn(isbn);
         }
         String username = jwtTokenUtil.returnUserFromRequest(request);
         User user = userService.getUserByEmail(username);
@@ -87,6 +91,20 @@ public class BookController {
         UsersLibrary usersLibrary = usersLibraryService.getUsersLibraryByUser(user);
         usersLibrary.getBooks().add(book.getId(),book);
         return HttpStatus.ACCEPTED;
+    }
+
+    @PostMapping("/uploadCover")
+    public HttpStatus uploadCover(HttpServletRequest request,
+                                  @RequestParam("cover") MultipartFile image,
+                                  @RequestParam("bookId") Integer bookId) throws IOException {
+        Book book = bookService.getBook(bookId);
+        if (book.getCover() == null){
+            book.setCover(image.getBytes());
+            bookService.updateBook(book);
+            return HttpStatus.ACCEPTED;
+        }
+
+        return HttpStatus.IM_USED;
     }
 
 

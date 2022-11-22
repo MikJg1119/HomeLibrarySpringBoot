@@ -56,6 +56,10 @@ public class Book  {
     @Column(name = "publishingseries")
     private String publishingSeries;
 
+    @Column(name = "cover", nullable = true)
+    @Lob
+    private byte[] cover;
+
 
         @Autowired
         public Book(){
