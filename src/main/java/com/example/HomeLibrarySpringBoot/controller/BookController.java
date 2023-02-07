@@ -69,7 +69,7 @@ public class BookController {
         }else {
             book = bookService.getBookByIsbn(isbn);
         }
-        if (!Optional.ofNullable(book.getTitle()).isPresent()){
+        if (Optional.ofNullable(book.getTitle()).isEmpty()){
             book = new Book();
             book.setIsbn(isbn);
         }

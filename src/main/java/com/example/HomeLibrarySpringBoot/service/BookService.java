@@ -30,4 +30,6 @@ public interface BookService {
     BookDto toBookDto(Book book);
 
     List<BookDto> getAllBooksDto(List<Book> books);
+
+    Book scrapeBookByIsbn(Book book, String isbn);
 }

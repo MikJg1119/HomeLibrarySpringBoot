@@ -4,15 +4,23 @@ import com.example.HomeLibrarySpringBoot.model.Author;
 import com.example.HomeLibrarySpringBoot.model.Book;
 import com.example.HomeLibrarySpringBoot.model.dto.BookDto;
 import com.example.HomeLibrarySpringBoot.repository.BookRepository;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class BookServiceImpl implements BookService{
+
+    private static final StringBuilder urlBuild = new StringBuilder("https://data.bn.org.pl/api/institutions/bibs.json?isbnIssn=");
 
     @Autowired
     private BookRepository bookRepository;
@@ -88,28 +96,29 @@ public class BookServiceImpl implements BookService{
 
     @Override
     public Book getBookByIsbn(String isbn) {
-        Optional<Book> optional = bookRepository.findByIsbn(isbn);
+        String finalIsbn = isbn.replace("-","");
+        Optional<Book> optional = bookRepository.findByIsbn(finalIsbn);
         Book book = null;
         if (optional.isPresent()){
             return  optional.get();
         }else {
             book = new Book();
-            book.scrapeBookByIsbn(isbn);
+            scrapeBookByIsbn(book, finalIsbn);
             bookRepository.save(book);
         }
-        Optional<Author> author=authorService.getAuthorByName(book.getAuthor());
-        if (author.isPresent()) {
-        author.get().getBooksByAuthor().add(book);
-
-//      book.setAuthorId(author.get().getId());
-        authorService.updateAuthor(author.get());
+        Author author;
+        List<Book> authorsBooks;
+        Optional<Author> authorOptional = authorService.getAuthorByName(book.getAuthor());
+        if (authorOptional.isPresent()){
+            author = authorOptional.get();
+            authorsBooks = author.getBooksByAuthor();
         }else {
-        Author bookAuthor = new Author(book.getAuthor());
-        bookAuthor.getBooksByAuthor().add(book);
-//                bookRepository.save(book);
-//                book.setAuthorId(bookAuthor.getId());
-        authorService.addAuthor(bookAuthor);
+            author = new Author(book.getAuthor());
+            authorsBooks = new ArrayList<Book>();
         }
+        authorsBooks.add(book);
+        author.setBooksByAuthor(authorsBooks);
+        authorService.updateAuthor(author);
         return book;
     }
 
@@ -151,5 +160,57 @@ public class BookServiceImpl implements BookService{
     }
 
         return listBookDto;
+    }
+
+    @Override
+    public Book scrapeBookByIsbn(Book book, String isbn){
+        String finalIsbn = isbn.replace("-","");
+        book.setIsbn(finalIsbn);
+        urlBuild.append(isbn);
+        try {
+            URL url = new URL(urlBuild.toString());
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setRequestProperty("User-Agent","mozilla/17.0");
+            connection.connect();
+            int responseCode = connection.getResponseCode();
+            String response="";
+            if (responseCode==HttpURLConnection.HTTP_OK){
+                try {
+                    Scanner scanner= new Scanner(url.openStream());
+                    while (scanner.hasNext()){
+                        response+=scanner.nextLine();
+                    }
+                    JSONParser parser = new JSONParser();
+                    JSONObject obj = (JSONObject) parser.parse(response);
+                    JSONArray jsonArray = (JSONArray) obj.get("bibs");
+                    JSONObject jsonObject = (JSONObject) jsonArray.get(0);
+                    book.setTitle((String) jsonObject.get("title"));
+                    book.setPublisher ((String) jsonObject.get("publisher"));
+                    String authorsString = (String) jsonObject.get("author");
+                    ArrayList<String> authorsArray = (ArrayList<String>) Arrays.stream(authorsString.split("\\(")).collect(Collectors.toList());
+                    book.setAuthor(authorsArray.get(0));
+                    book.setPublishedYear((String) jsonObject.get("publicationYear"));
+                    book.setLanguage((String) jsonObject.get("language"));
+                    book.setSaga( "");
+                    book.setPublishingSeries("");
+                }catch (IndexOutOfBoundsException e){
+                    book.setSaga("");
+                    book.setPublishingSeries("");
+                    book.setLanguage("");
+                    book.setPublishedYear("");
+                    book.setAuthor("");
+                    book.setTitle("");
+                    book.setPublisher("");
+
+                }
+            }
+        } catch (IOException e){
+            e.getMessage();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return book;
     }
 }
