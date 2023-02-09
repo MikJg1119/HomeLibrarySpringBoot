@@ -102,8 +102,7 @@ public class BookServiceImpl implements BookService{
         if (optional.isPresent()){
             return  optional.get();
         }else {
-            book = new Book();
-            scrapeBookByIsbn(book, finalIsbn);
+            book = scrapeBookByIsbn(finalIsbn);
             bookRepository.save(book);
         }
         Author author;
@@ -163,10 +162,11 @@ public class BookServiceImpl implements BookService{
     }
 
     @Override
-    public Book scrapeBookByIsbn(Book book, String isbn){
+    public Book scrapeBookByIsbn(String isbn){
         String finalIsbn = isbn.replace("-","");
+        Book book = new Book();
         book.setIsbn(finalIsbn);
-        urlBuild.append(isbn);
+        urlBuild.append(finalIsbn);
         try {
             URL url = new URL(urlBuild.toString());
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -206,7 +206,7 @@ public class BookServiceImpl implements BookService{
                 }
             }
         } catch (IOException e){
-            e.getMessage();
+            e.printStackTrace();
         } catch (ParseException e) {
             e.printStackTrace();
         }

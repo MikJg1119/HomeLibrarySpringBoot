@@ -7,12 +7,20 @@ import java.util.List;
 
 public interface LoaneeService {
     void addLoanee(Loanee loanee);
+
     void removeLoanee(int id);
+
     Loanee getLoanee(int id);
+
     List<Loanee> getLoanees();
+
     void loanBook(Book book, int loaneeId);
+
     void loanBook(List<Book> booksToBeLoaned, int loaneeId);
-    void returnLoanedBook(Book book,int loaneeId);
+
+    void returnLoanedBook(Book book, int loaneeId);
+
     void returnLoanedBook(List<Book> booksToBeReturned, int loaneeId);
+
     List<Loanee> getAllLoaneesById(Iterable<Integer> ids);
 }
