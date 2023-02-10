@@ -4,7 +4,6 @@ import com.example.HomeLibrarySpringBoot.model.Author;
 import com.example.HomeLibrarySpringBoot.model.Book;
 import com.example.HomeLibrarySpringBoot.model.User;
 import com.example.HomeLibrarySpringBoot.model.dto.AuthorDto;
-import com.example.HomeLibrarySpringBoot.model.dto.BookDto;
 import com.example.HomeLibrarySpringBoot.repository.AuthorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,6 +11,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -73,9 +73,9 @@ public class AuthorServiceImpl implements AuthorService{
 
     @Override
     public List<Author> getAuthorsByUser(User user) {
-        List<Book> usersbooks = usersLibraryService.getBooksByUser(user);
+        Map<Book, String> usersbooks = usersLibraryService.getBooksByUser(user);
         List<String> authorsNames = new ArrayList<String>();
-        for (Book book : usersbooks){
+        for (Book book : usersbooks.keySet()){
             authorsNames.add(book.getAuthor());
         }
         List<Author> authors=new ArrayList<Author>();

@@ -7,6 +7,7 @@ import com.example.HomeLibrarySpringBoot.model.User;
 import com.example.HomeLibrarySpringBoot.model.UsersLibrary;
 
 import java.util.List;
+import java.util.Map;
 
 public interface UsersLibraryService {
 
@@ -14,13 +15,15 @@ public interface UsersLibraryService {
 
     UsersLibrary getUsersLibraryByUser(User user);
 
-    void setBooks(User user, List<Book> books);
+    void setBooks(User user, Map<Book, String> books);
 
     void setLoanees(User user, List<Loanee> loanees);
 
-    List<Book> getBooksByUser(User user);
+    Map<Book, String> getBooksByUser(User user);
 
     List<Loanee> getLoaneesByUser(User user);
 
     List<Book> getBooksLoanedToLoaneeByUser(int userId, int loaneeId);
+
+    void returnBook(Book book, User user);
 }

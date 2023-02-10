@@ -18,5 +18,6 @@ public class BookDto implements Serializable {
     private int id;
     private String saga;
     private String publishingSeries;
+    private String location;
 
 }

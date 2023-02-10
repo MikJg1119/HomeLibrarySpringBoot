@@ -17,7 +17,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @CrossOrigin(origins = "*")
@@ -48,13 +50,22 @@ public class BookController {
 
     @GetMapping(value = "/booksList")
     @ResponseBody
-    public List<Book> booksList(HttpServletRequest request){
+    public List<BookDto> booksList(HttpServletRequest request){
         String username = jwtTokenUtil.returnUserFromRequest(request);
         User user = userService.getUserByEmail(username);
-        List<Book> books;
+        Map<Book, String> books;
         UsersLibrary usersLibrary = usersLibraryService.getUsersLibraryByUser(user);
-        books=usersLibrary.getBooks();
-        return books;
+        books=usersLibrary.getBooksAndLocation();
+        List<BookDto> bookDtos = bookService.getAllBooksDto(new ArrayList<>(books.keySet()));
+        for (BookDto bookDto : bookDtos){
+            for (Book book : books.keySet()){
+            if (bookDto.getId() == book.getId()){
+                bookDto.setLocation(books.get(book));
+            }
+            }
+        }
+
+        return bookDtos;
 //        return bookService.getAllBooksDto(books);
     }
 
@@ -76,7 +87,9 @@ public class BookController {
         String username = jwtTokenUtil.returnUserFromRequest(request);
         User user = userService.getUserByEmail(username);
         UsersLibrary usersLibrary = usersLibraryService.getUsersLibraryByUser(user);
-       usersLibrary.getBooks().add(book);
+        Map<Book, String> booksAndLocation = usersLibrary.getBooksAndLocation();
+        booksAndLocation.put(book, bookDto.getLocation());
+        usersLibrary.setBooksAndLocation(booksAndLocation);
         usersLibraryService.save(usersLibrary);
         return HttpStatus.OK;
     }
@@ -89,7 +102,10 @@ public class BookController {
         String username = jwtTokenUtil.returnUserFromRequest(request);
         User user = userService.getUserByEmail(username);
         UsersLibrary usersLibrary = usersLibraryService.getUsersLibraryByUser(user);
-        usersLibrary.getBooks().add(book.getId(),book);
+        Map<Book, String> bookshelf = usersLibrary.getBooksAndLocation();
+        bookshelf.put(book, bookDto.getLocation());
+        usersLibrary.setBooksAndLocation(bookshelf);
+        usersLibraryService.save(usersLibrary);
         return HttpStatus.ACCEPTED;
     }
 
@@ -114,7 +130,7 @@ public class BookController {
         String username = jwtTokenUtil.returnUserFromRequest(request);
         User user = userService.getUserByEmail(username);
         UsersLibrary usersLibrary = usersLibraryService.getUsersLibraryByUser(user);
-        usersLibrary.getBooks().remove(bookService.getBook(id));
+        usersLibrary.getBooksAndLocation().remove(bookService.getBook(id));
         usersLibraryService.save(usersLibrary);
 
         return HttpStatus.ACCEPTED;

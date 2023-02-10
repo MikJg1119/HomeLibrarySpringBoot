@@ -2,12 +2,19 @@ package com.example.HomeLibrarySpringBoot.service;
 
 import com.example.HomeLibrarySpringBoot.model.Book;
 import com.example.HomeLibrarySpringBoot.model.Loanee;
+import com.example.HomeLibrarySpringBoot.model.User;
+import com.example.HomeLibrarySpringBoot.model.UsersLibrary;
 import com.example.HomeLibrarySpringBoot.repository.LoaneeRepository;
 import com.example.HomeLibrarySpringBoot.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.security.spec.InvalidParameterSpecException;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 @Service
 public class LoaneeServiceImpl implements LoaneeService{
 
@@ -18,6 +25,11 @@ public class LoaneeServiceImpl implements LoaneeService{
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private UsersLibraryService usersLibraryService;
+
+    @Autowired
+    private BookService bookService;
 
 
     @Override
@@ -46,8 +58,28 @@ public class LoaneeServiceImpl implements LoaneeService{
     }
 
     @Override
-    public void loanBook(List<Book> booksToBeLoaned,int loaneeId) {
-        loaneeRepository.getById(loaneeId).addLoanedBook(booksToBeLoaned);
+    public void loanBook(UsersLibrary usersLibrary, User user, int [] booksToBeLoanedIds, int loaneeId) throws InvalidParameterSpecException {
+        List<Loanee> usersLoanees = usersLibrary.getLoanees();
+        Map<Book, Loanee> booksLoanedOut = usersLibrary.getBooksLoanedToLoanees();
+        Loanee loanee = getLoanee(loaneeId);
+
+        List<Book> booksToBeLoaned = bookService.getBooksById(Arrays.stream(booksToBeLoanedIds).boxed().collect(Collectors.toList()));
+        for (Book book : booksLoanedOut.keySet()){
+            if (booksToBeLoaned.contains(book)){
+                throw new InvalidParameterSpecException(book.getId()+" is already loaned out");
+            }
+        }
+        for (Book book : booksToBeLoaned){
+            booksLoanedOut.put(book, loanee);
+        }
+
+        if(!usersLoanees.contains(loanee)){
+            usersLoanees.add(loanee);
+        }
+        loanee.addLoanedBook(booksToBeLoaned);
+        usersLibrary.setBooksLoanedToLoanees(booksLoanedOut);
+        loaneeRepository.save(loanee);
+        usersLibraryService.save(usersLibrary);
     }
 
     @Override

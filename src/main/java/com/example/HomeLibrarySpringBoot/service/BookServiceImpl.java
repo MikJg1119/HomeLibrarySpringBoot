@@ -152,6 +152,22 @@ public class BookServiceImpl implements BookService{
     }
 
     @Override
+    public BookDto toBookDtoWithLocation(Book book, String location) {
+        BookDto bookDto = new BookDto();
+        bookDto.setTitle(book.getTitle());
+        bookDto.setAuthor(book.getAuthor());
+        bookDto.setIsbn(book.getIsbn());
+        bookDto.setPublisher(book.getPublisher());
+        bookDto.setPublishedYear(book.getPublishedYear());
+        bookDto.setLanguage(book.getLanguage());
+        bookDto.setId(book.getId());
+        bookDto.setSaga(book.getSaga());
+        bookDto.setPublishingSeries(book.getPublishingSeries());
+        bookDto.setLocation(location);
+        return bookDto;
+    }
+
+    @Override
     public List<BookDto> getAllBooksDto(List<Book> books) {
         List<BookDto> listBookDto = new ArrayList<BookDto>();
         for (Book book : books){
@@ -212,5 +228,15 @@ public class BookServiceImpl implements BookService{
         }
 
         return book;
+    }
+
+    @Override
+    public List<BookDto> getAllBooksDtoWithLocation(Map<Book, String> books) {
+        List<BookDto> listBookDto = new ArrayList<BookDto>();
+        for (Book book : books.keySet()){
+            listBookDto.add(toBookDtoWithLocation(book, books.get(book)));
+        }
+
+        return listBookDto;
     }
 }

@@ -55,7 +55,7 @@ public class AuthorController {
         UsersLibrary usersLibrary = usersLibraryService.getUsersLibraryByUser(user);
         Author author = authorService.getAuthor(id);
         List<Book> authorsBooks=bookService.getBookByAuthor(author.getName());
-        books=usersLibrary.getBooks().stream().filter(authorsBooks::contains).collect(Collectors.toList());
+        books=usersLibrary.getBooksAndLocation().keySet().stream().filter(authorsBooks::contains).collect(Collectors.toList());
         return books;
     }
 

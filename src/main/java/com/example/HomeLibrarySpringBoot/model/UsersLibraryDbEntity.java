@@ -2,19 +2,24 @@ package com.example.HomeLibrarySpringBoot.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 @NoArgsConstructor
 @Data
 public class UsersLibraryDbEntity {
 
-    @Id
+    @Column(columnDefinition = "serial")
+    @Generated(GenerationTime.INSERT)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
     private int userId;
 
-    private String personalBookshelfIdsJson;
+    private String personalBookshelfIdsAndLocationJson;
 
     private String personalLoaneesIdsJson;
 

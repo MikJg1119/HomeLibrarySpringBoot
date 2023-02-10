@@ -2,7 +2,10 @@ package com.example.HomeLibrarySpringBoot.service;
 
 import com.example.HomeLibrarySpringBoot.model.Book;
 import com.example.HomeLibrarySpringBoot.model.Loanee;
+import com.example.HomeLibrarySpringBoot.model.User;
+import com.example.HomeLibrarySpringBoot.model.UsersLibrary;
 
+import java.security.spec.InvalidParameterSpecException;
 import java.util.List;
 
 public interface LoaneeService {
@@ -16,7 +19,7 @@ public interface LoaneeService {
 
     void loanBook(Book book, int loaneeId);
 
-    void loanBook(List<Book> booksToBeLoaned, int loaneeId);
+    void loanBook(UsersLibrary usersLibrary, User user, int [] booksToBeLoaned, int loaneeId) throws InvalidParameterSpecException;
 
     void returnLoanedBook(Book book, int loaneeId);
 

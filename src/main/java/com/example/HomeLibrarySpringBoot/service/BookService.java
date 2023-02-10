@@ -4,6 +4,7 @@ import com.example.HomeLibrarySpringBoot.model.Book;
 import com.example.HomeLibrarySpringBoot.model.dto.BookDto;
 
 import java.util.List;
+import java.util.Map;
 
 public interface BookService {
 
@@ -32,4 +33,8 @@ public interface BookService {
     List<BookDto> getAllBooksDto(List<Book> books);
 
     Book scrapeBookByIsbn(String isbn);
+
+    BookDto toBookDtoWithLocation(Book book, String location);
+
+    List<BookDto> getAllBooksDtoWithLocation(Map<Book, String> books);
 }

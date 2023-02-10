@@ -5,19 +5,20 @@ import com.example.HomeLibrarySpringBoot.model.Book;
 import com.example.HomeLibrarySpringBoot.model.Loanee;
 import com.example.HomeLibrarySpringBoot.model.User;
 import com.example.HomeLibrarySpringBoot.model.UsersLibrary;
+import com.example.HomeLibrarySpringBoot.model.dto.BookDto;
 import com.example.HomeLibrarySpringBoot.service.BookService;
 import com.example.HomeLibrarySpringBoot.service.LoaneeService;
 import com.example.HomeLibrarySpringBoot.service.UserService;
 import com.example.HomeLibrarySpringBoot.service.UsersLibraryService;
-import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.security.spec.InvalidParameterSpecException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 @CrossOrigin(origins = "*")
 @RestController
@@ -49,52 +50,28 @@ public class LoaneeController {
         this.usersLibraryService = usersLibraryService;
     }
 
-//    @PostMapping("/loanBooksForm")
-//    public HttpStatus loanBooks(@RequestParam @Nullable String email,
-//                                @RequestParam @Nullable int userId,
-//                                @RequestBody int [] booksToBeLoanedId){
-//
-//        if (booksToBeLoanedId.length==0){
-//            return HttpStatus.NO_CONTENT;
-//        }
-//        List<Book> booksToBeLoaned=new ArrayList<Book>();
-//        for(int i : booksToBeLoanedId){
-//            booksToBeLoaned.add(bookService.getBook(i));
-//
-//        }
-//        User user = email !=null ? userService.getUserByEmail(email) : userService.getUserById(userId);
-//        return "/loanBooks";
-//    }
     @PostMapping("/loanBooksToLoanee/{loaneeId}")
     public HttpStatus loanBooksToLoanee(@PathVariable(value = "loaneeId") Integer loaneeId,
                                         HttpServletRequest request,
-                                        @RequestBody Integer [] booksToBeLoanedId){
-        List<Book> booksToBeLoaned = new ArrayList<>();
-        for (int id : booksToBeLoanedId){
-            booksToBeLoaned.add(bookService.getBook(id));
-        }
-        loaneeService.loanBook(booksToBeLoaned,loaneeId);
+                                        @RequestBody int [] booksToBeLoanedIds){
+
         String username = jwtTokenUtil.returnUserFromRequest(request);
         User user = userService.getUserByEmail(username);
         UsersLibrary usersLibrary = usersLibraryService.getUsersLibraryByUser(user);
-        List<Loanee> usersLoanees = usersLibrary.getLoanees();
         Loanee loanee = loaneeService.getLoanee(loaneeId);
-        for (Book book : booksToBeLoaned){
-            usersLibrary.getBooksLoanedToLoanees().put(book,loanee);
+        try {
+            loaneeService.loanBook(usersLibrary, user,booksToBeLoanedIds,loaneeId);
+        } catch (InvalidParameterSpecException e) {
+            e.printStackTrace();
+            return HttpStatus.UNPROCESSABLE_ENTITY;
         }
-
-        if(!usersLoanees.contains(loanee)){
-            usersLoanees.add(loanee);
-        }
-        usersLibraryService.save(usersLibrary);
-
         return HttpStatus.OK;
     }
 
     @PostMapping("/saveLoaneeAndLoanBooks")
     public HttpStatus saveLoaneeAndLoanBooks(@RequestBody Loanee loanee,
                                              HttpServletRequest request,
-                                         @RequestBody Integer [] booksToBeLoanedId){
+                                         @RequestBody int [] booksToBeLoanedId){
 
         if (!loaneeService.getLoanees().contains(loanee)){
             loaneeService.addLoanee(loanee);
@@ -108,23 +85,32 @@ public class LoaneeController {
         String username = jwtTokenUtil.returnUserFromRequest(request);
         User user = userService.getUserByEmail(username);
         UsersLibrary usersLibrary = usersLibraryService.getUsersLibraryByUser(user);
-        usersLibrary.getLoanees().add(loanee);
-
-        for (Book book : booksToBeLoaned){
-            usersLibrary.getBooksLoanedToLoanees().put(book,loanee);
+        try {
+            loaneeService.loanBook(usersLibrary, user, booksToBeLoanedId,loanee.getId());
+        } catch (InvalidParameterSpecException e) {
+            e.printStackTrace();
+            return HttpStatus.UNPROCESSABLE_ENTITY;
         }
-        loaneeService.loanBook(booksToBeLoaned,loanee.getId());
 
         return HttpStatus.OK;
     }
 
     @PostMapping("/loanedBooksListByLoanee/{id}")
-    public List<Book> listOfBooksLoanedByLoanee(@PathVariable(value = "id") Integer id,
-                                                HttpServletRequest request){
+    public List<BookDto> listOfBooksLoanedByLoanee(@PathVariable(value = "id") Integer id,
+                                                   HttpServletRequest request){
         String username = jwtTokenUtil.returnUserFromRequest(request);
         User user = userService.getUserByEmail(username);
-        List<Book> usersBooks= usersLibraryService.getBooksByUser(user);
-        return  loaneeService.getLoanee(id).getLoanedBooks().stream().filter(e ->usersBooks.contains(e)).collect(Collectors.toList());
+        Map<Book,String> usersBooks= usersLibraryService.getBooksByUser(user);
+        List<BookDto> bookDtos = bookService.getAllBooksDtoWithLocation(usersBooks);
+        List<BookDto> booksLoanedByLoanee = new ArrayList<>();
+//        return  loaneeService.getLoanee(id).getLoanedBooks().stream().filter(e.getId() -> bookDtos.contains()).collect(Collectors.toList());
+        UsersLibrary usersLibrary = usersLibraryService.getUsersLibraryByUser(user);
+        for (Book book : usersLibrary.getBooksLoanedToLoanees().keySet()){
+            if (usersLibrary.getBooksLoanedToLoanees().get(book).getId() == id){
+                booksLoanedByLoanee.add(bookService.toBookDto(book));
+            }
+        }
+        return booksLoanedByLoanee;
     }
 
     @PostMapping("/returnBook/{id}")
@@ -133,9 +119,7 @@ public class LoaneeController {
         Book book = bookService.getBook(bookId);
         String username = jwtTokenUtil.returnUserFromRequest(request);
         User user = userService.getUserByEmail(username);
-        Loanee loanee = usersLibraryService.getUsersLibraryByUser(user).checkIfBookIsLoaned(book);
-        loanee.returnLoanedBook(book);
-
+        usersLibraryService.returnBook(book, user);
         return HttpStatus.ACCEPTED;
     }
 

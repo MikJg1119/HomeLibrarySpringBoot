@@ -2,8 +2,6 @@ package com.example.HomeLibrarySpringBoot.model;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.Generated;
-import org.hibernate.annotations.GenerationTime;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
@@ -17,38 +15,17 @@ import java.util.Map;
 @Setter
 public class UsersLibrary {
 
-    @Id
-    @Column(columnDefinition = "serial")
-    @Generated(GenerationTime.INSERT)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
 
     @OneToOne
     private User user;
 
 
-    @JoinColumn
-    @OneToMany(cascade = {CascadeType.ALL})
-    @JoinTable(
-            joinColumns = @JoinColumn( name = "userLibraryId", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "bookId", referencedColumnName = "id")
-    )
-    private List<Book> books = new ArrayList<Book>();
+    private Map<Book, String> booksAndLocation = new HashMap<>();
 
 
-    @OneToMany(cascade = {CascadeType.ALL})
-    @JoinTable(
-            joinColumns = @JoinColumn( name = "userLibraryId", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "loaneeId", referencedColumnName = "id")
-    )
-    private List<Loanee> loanees = new ArrayList<Loanee>();
+    private List<Loanee> loanees = new ArrayList<>();
 
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "loanee_book_mapping",
-            joinColumns = {@JoinColumn(name = "usersLibraryId", referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(name = "bookId", referencedColumnName = "id")})
-    @MapKeyJoinColumn(name = "loaneeId")
     private Map<Book,Loanee> booksLoanedToLoanees =new HashMap<>();
 
 

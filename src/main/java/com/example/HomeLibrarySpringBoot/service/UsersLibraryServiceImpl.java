@@ -55,19 +55,19 @@ public class UsersLibraryServiceImpl implements UsersLibraryService {
     }
 
     @Override
-    public void setBooks(User user, List<Book> books) {
+    public void setBooks(User user, Map<Book, String> books) {
         Optional<UsersLibraryDbEntity> userDb = usersLibraryRepository.findById(user.getId());
         if (userDb.isPresent()){
             UsersLibraryDbEntity usersLibraryDbEntity = userDb.get();
-            List<Integer> bookIds = null;
+            Map<Integer, String> bookIds = null;
             try {
-                bookIds = objectMapper.readValue(userDb.get().getPersonalBookshelfIdsJson(), List.class);
-                for(Book book : books){
-                    if (!bookIds.contains(book.getId())){
-                        bookIds.add(book.getId());
+                bookIds = objectMapper.readValue(userDb.get().getPersonalBookshelfIdsAndLocationJson(), Map.class);
+                for(Book book : books.keySet()){
+                    if (!bookIds.keySet().contains(book.getId())){
+                        bookIds.put(book.getId(), books.get(book));
                     }
                 }
-                usersLibraryDbEntity.setPersonalBookshelfIdsJson(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(bookIds));
+                usersLibraryDbEntity.setPersonalBookshelfIdsAndLocationJson(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(bookIds));
                 usersLibraryRepository.save(usersLibraryDbEntity);
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
@@ -100,10 +100,10 @@ public class UsersLibraryServiceImpl implements UsersLibraryService {
     }
 
     @Override
-    public List<Book> getBooksByUser(User user) {
+    public Map<Book, String> getBooksByUser(User user) {
 
         Optional<UsersLibraryDbEntity> dbRecord = usersLibraryRepository.findById(user.getId());
-        return dbRecord.map(usersLibraryDbEntity -> toFinalEntity(usersLibraryDbEntity).getBooks()).orElse(null);
+        return dbRecord.map(usersLibraryDbEntity -> toFinalEntity(usersLibraryDbEntity).getBooksAndLocation()).orElse(null);
     }
 
     @Override
@@ -128,6 +128,25 @@ public class UsersLibraryServiceImpl implements UsersLibraryService {
         return booksLoanedToLoanee;
     }
 
+    @Override
+    public void returnBook(Book book, User user){
+        UsersLibrary usersLibrary = getUsersLibraryByUser(user);
+        Loanee loanee = usersLibrary.checkIfBookIsLoaned(book);
+        loanee.returnLoanedBook(book);
+        Map<Book, Loanee> booksLoanedToLoanees = usersLibrary.getBooksLoanedToLoanees();
+        if (booksLoanedToLoanees.containsKey(book)){
+            booksLoanedToLoanees.remove(book);
+        }
+        usersLibrary.setBooksLoanedToLoanees(booksLoanedToLoanees);
+        List<Loanee> loaneesList = usersLibrary.getLoanees();
+         if (!booksLoanedToLoanees.containsValue(loanee)){
+            loaneesList.remove(loanee);
+         }
+
+        save(usersLibrary);
+
+    }
+
     private UsersLibraryDbEntity toDbEntity(UsersLibrary usersLibrary){
 
 
@@ -135,7 +154,7 @@ public class UsersLibraryServiceImpl implements UsersLibraryService {
         usersLibraryDbEntity.setUserId(usersLibrary.getUser().getId());
         Map<Integer, Integer> bookIdsToLoaneeIds = new HashMap<>();
         List<Integer> bookIds = new ArrayList<>();
-        for (Book book : usersLibrary.getBooks()){
+        for (Book book : usersLibrary.getBooksAndLocation().keySet()){
             bookIds.add(book.getId());
             if (usersLibrary.getBooksLoanedToLoanees().containsKey(book)){
                 bookIdsToLoaneeIds.put(book.getId(), usersLibrary.getBooksLoanedToLoanees().get(book).getId());
@@ -147,7 +166,7 @@ public class UsersLibraryServiceImpl implements UsersLibraryService {
         }
 
         try {
-            usersLibraryDbEntity.setPersonalBookshelfIdsJson(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(bookIds));
+            usersLibraryDbEntity.setPersonalBookshelfIdsAndLocationJson(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(bookIds));
             usersLibraryDbEntity.setPersonalLoaneesIdsJson(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(loaneeIds));
             usersLibraryDbEntity.setPersonalMapBookIdToLoaneeIdJson(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(bookIdsToLoaneeIds));
         } catch (JsonProcessingException e) {
@@ -159,14 +178,19 @@ public class UsersLibraryServiceImpl implements UsersLibraryService {
     private UsersLibrary toFinalEntity (UsersLibraryDbEntity usersLibraryDbEntity)  {
         UsersLibrary usersLibrary = new UsersLibrary();
         usersLibrary.setUser(userService.getUserById(usersLibraryDbEntity.getUserId()));
-        List<Integer> booksIds;
+        Map<Integer, String> booksIds;
         List<Integer> loaneeIds;
         Map<Integer, Integer> booksToLoaneesIds;
         try {
-            booksIds = objectMapper.readValue(usersLibraryDbEntity.getPersonalBookshelfIdsJson(), List.class);
+            booksIds = objectMapper.readValue(usersLibraryDbEntity.getPersonalBookshelfIdsAndLocationJson(), Map.class);
             loaneeIds = objectMapper.readValue(usersLibraryDbEntity.getPersonalLoaneesIdsJson(), List.class);
             booksToLoaneesIds = objectMapper.readValue(usersLibraryDbEntity.getPersonalMapBookIdToLoaneeIdJson(), Map.class);
-            usersLibrary.setBooks(bookService.getBooksById(booksIds));
+            Map <Book, String> bookshelf = new HashMap<>();
+            List<Book> books = bookService.getBooksById(booksIds.keySet());
+            for (Book book : books){
+                bookshelf.put(book, booksIds.get(book.getId()));
+            }
+            usersLibrary.setBooksAndLocation(bookshelf);
             usersLibrary.setLoanees(loaneeService.getAllLoaneesById(loaneeIds));
             Map<Book, Loanee> booksLoanedToLoanee = new HashMap<>();
             List <Book> loanedBooks = bookService.getBooksById(booksToLoaneesIds.keySet());
