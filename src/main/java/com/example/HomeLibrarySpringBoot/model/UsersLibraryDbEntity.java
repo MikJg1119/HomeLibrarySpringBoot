@@ -15,6 +15,7 @@ public class UsersLibraryDbEntity {
     @Column(columnDefinition = "serial")
     @Generated(GenerationTime.INSERT)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
     private int id;
 
     private int userId;

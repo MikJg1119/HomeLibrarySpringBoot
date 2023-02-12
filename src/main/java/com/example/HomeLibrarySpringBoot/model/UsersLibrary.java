@@ -2,21 +2,17 @@ package com.example.HomeLibrarySpringBoot.model;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Entity
 @Getter
 @Setter
 public class UsersLibrary {
 
 
-    @OneToOne
     private User user;
 
 
@@ -34,7 +30,6 @@ public class UsersLibrary {
 //        this.loanees=new ArrayList<Loanee>();
     }
 
-    @Autowired
     public UsersLibrary(User user) {
         this.user = user;
 //        this.books=new ArrayList<Book>();
