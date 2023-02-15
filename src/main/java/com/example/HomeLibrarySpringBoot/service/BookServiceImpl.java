@@ -15,7 +15,11 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
+
+import static java.util.Arrays.stream;
 
 @Service
 public class BookServiceImpl implements BookService{
@@ -169,11 +173,12 @@ public class BookServiceImpl implements BookService{
 
     @Override
     public List<BookDto> getAllBooksDto(List<Book> books) {
-        List<BookDto> listBookDto = new ArrayList<BookDto>();
-        for (Book book : books){
-            listBookDto.add(toBookDto(book));
-    }
+    // List<BookDto> listBookDto = new ArrayList<BookDto>();
+      //for (Book book : books){
+        //    listBookDto.add(toBookDto(book));
+    // }
 
+        List<BookDto> listBookDto = books.stream().map((Book book) ->new BookDto() ).collect(Collectors.toList());
         return listBookDto;
     }
 
@@ -204,7 +209,7 @@ public class BookServiceImpl implements BookService{
                     book.setTitle((String) jsonObject.get("title"));
                     book.setPublisher ((String) jsonObject.get("publisher"));
                     String authorsString = (String) jsonObject.get("author");
-                    ArrayList<String> authorsArray = (ArrayList<String>) Arrays.stream(authorsString.split("\\(")).collect(Collectors.toList());
+                    ArrayList<String> authorsArray = (ArrayList<String>) stream(authorsString.split("\\(")).collect(Collectors.toList());
                     book.setAuthor(authorsArray.get(0));
                     book.setPublishedYear((String) jsonObject.get("publicationYear"));
                     book.setLanguage((String) jsonObject.get("language"));
